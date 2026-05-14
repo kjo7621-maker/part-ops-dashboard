@@ -125,7 +125,8 @@ tr:hover td{background:#FAFAF8}
 .ev-ffl{background:var(--ffl-bg);color:var(--ffl)}
 .ev-ftb{background:var(--ftb-bg);color:var(--ftb)}
 .ev-fco{background:var(--fco-bg);color:var(--fco)}
-.ev-lv{background:var(--surface2);color:var(--text2)}
+.ev-lv{background:#EFF6FF;color:#1E40AF}
+.ev-out{background:#FFF7ED;color:#C2410C}
 .ev-task{background:#FFF7ED;color:#C2410C}
 /* 모달 */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
@@ -326,7 +327,9 @@ tr:hover td{background:#FAFAF8}
       <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--ffl)"></div>FFL</div>
       <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--ftb)"></div>FTB</div>
       <div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--fco)"></div>FC PRO</div>
-      <div class="cal-leg-item"><div class="cal-leg-dot" style="background:#C2410C"></div>마감업무</div>
+      <div class="cal-leg-item"><div class="cal-leg-dot" style="background:#1E40AF"></div>휴가</div>
+      <div class="cal-leg-item"><div class="cal-leg-dot" style="background:#C2410C"></div>외근</div>
+      <div class="cal-leg-item"><div class="cal-leg-dot" style="background:#7C2D12"></div>마감업무</div>
     </div>
   </div>
   <div class="cg" id="cg">
@@ -629,7 +632,8 @@ function renderCal(){
   const last=new Date(calY,calM+1,0).getDate();
   const prev=new Date(calY,calM,0).getDate();
   const tod=new Date();
-  const offMap={},lvMap={},taskMap={};
+  const offMap={},lvMap={},outMap={},taskMap={};
+  // lvMap = 연차/대휴, outMap = 외근
   officials.forEach(o=>{
     const d=o['일정'];if(!d)return;
     const pts=String(d).split('-');if(pts.length<3)return;
@@ -640,7 +644,13 @@ function renderCal(){
     const d=l['날짜'];if(!d)return;
     const pts=String(d).split('-');if(pts.length<3)return;
     const [y,mo,day]=[parseInt(pts[0]),parseInt(pts[1])-1,parseInt(pts[2])];
-    if(y===calY&&mo===calM){if(!lvMap[day])lvMap[day]=new Set();lvMap[day].add(l['담당자']);}
+    if(y===calY&&mo===calM){
+      if(l['종류']==='외근'){
+        if(!outMap[day])outMap[day]=new Set();outMap[day].add(l['담당자']);
+      } else {
+        if(!lvMap[day])lvMap[day]=new Set();lvMap[day].add(l['담당자']);
+      }
+    }
   });
   tasks.filter(t=>t['업무명']&&t['마감기한']&&t['상태']!=='완료').forEach(t=>{
     const pts=String(t['마감기한']).split('-');if(pts.length<3)return;
@@ -660,7 +670,7 @@ function renderCal(){
     cell.className=cls;
     if(inM){
       const ds=`${calY}-${String(calM+1).padStart(2,'0')}-${String(dn2).padStart(2,'0')}`;
-      cell.onclick=()=>openModal(dn2,ds,offMap[dn2]||[],lvMap[dn2]||new Set(),taskMap[dn2]||[]);
+      cell.onclick=()=>openModal(dn2,ds,offMap[dn2]||[],lvMap[dn2]||new Set(),outMap[dn2]||new Set(),taskMap[dn2]||[]);
     }
     let html=`<div class="cdn">${dn}</div>`;
     if(inM&&offMap[dn2])offMap[dn2].slice(0,2).forEach(o=>{
@@ -669,10 +679,14 @@ function renderCal(){
       html+=`<div class="cev ${ec}">${p} ${(o['내용']||'').slice(0,8)}</div>`;
     });
     if(inM&&taskMap[dn2])taskMap[dn2].slice(0,1).forEach(t=>{
-      html+=`<div class="cev ev-task">📌 ${String(t['업무명']).slice(0,9)}</div>`;
+      html+=`<div class="cev ev-task">📌 ${String(t['업무명'])}</div>`;
     });
     if(inM&&lvMap[dn2]&&lvMap[dn2].size)
       html+=`<div class="cev ev-lv">🏖 ${[...lvMap[dn2]].join(' ')}</div>`;
+    if(inM&&outMap[dn2]&&outMap[dn2].size)
+      html+=`<div class="cev ev-out">🚗 ${[...outMap[dn2]].join(' ')}</div>`;
+    if(inM&&outMap[dn2]&&outMap[dn2].size)
+      html+=`<div class="cev ev-out">🚗 ${[...outMap[dn2]].join(' ')}</div>`;
     if(inM&&offMap[dn2]&&offMap[dn2].length>2)
       html+=`<div style="font-size:10px;color:var(--text3);padding:1px 4px">+${offMap[dn2].length-2}건 더</div>`;
     cell.innerHTML=html;grid.appendChild(cell);
@@ -681,7 +695,7 @@ function renderCal(){
 function prevMon(){if(calM===0){calM=11;calY--}else calM--;renderCal()}
 function nextMon(){if(calM===11){calM=0;calY++}else calM++;renderCal()}
 
-function openModal(day,ds,evts,lvSet,taskItems){
+function openModal(day,ds,evts,lvSet,outSet,taskItems){
   const mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('modal-title').textContent=`${calY}년 ${mn[calM]} ${day}일`;
   document.getElementById('modal-date').textContent=ds;
@@ -700,8 +714,12 @@ function openModal(day,ds,evts,lvSet,taskItems){
     html+='</div>';
   }
   if(lvSet.size){
-    html+=`<div class="modal-sec"><div class="modal-sec-t">휴가 / 외근 (${lvSet.size}명)</div>`;
+    html+=`<div class="modal-sec"><div class="modal-sec-t">🏖 휴가 — 연차 / 대휴 (${lvSet.size}명)</div>`;
     html+=`<div class="modal-item"><div class="mi-s">${[...lvSet].join(', ')}</div></div></div>`;
+  }
+  if(outSet&&outSet.size){
+    html+=`<div class="modal-sec"><div class="modal-sec-t">🚗 외근 (${outSet.size}명)</div>`;
+    html+=`<div class="modal-item"><div class="mi-s">${[...outSet].join(', ')}</div></div></div>`;
   }
   if(!html)html='<div class="empty">등록된 일정이 없습니다</div>';
   document.getElementById('modal-body').innerHTML=html;
