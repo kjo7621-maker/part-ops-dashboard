@@ -183,6 +183,141 @@ tr:hover td{background:#FAFAF8}
 .del-notice{background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r);padding:10px 14px;font-size:12.5px;color:var(--warn);margin-bottom:12px;display:none;align-items:center;gap:8px}
 .del-notice.show{display:flex}
 .del-count{font-weight:700}
+
+/* ── 예산 관리 ───────────────────────────────────── */
+.bud-tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border);margin-bottom:18px}
+.bud-tab{padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);border-bottom:2px solid transparent;font-family:inherit;transition:all .15s}
+.bud-tab:hover{color:var(--text)}
+.bud-tab.on{color:var(--text);border-bottom-color:var(--black);font-weight:600}
+.proj-pill-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.proj-pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid var(--border2);background:var(--surface);color:var(--text2);transition:all .15s}
+.proj-pill:hover{border-color:var(--black);color:var(--text)}
+.proj-pill.on{background:var(--black);color:#fff;border-color:var(--black)}
+.bud-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.bud-kpi-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rl);padding:14px 16px;box-shadow:var(--shadow)}
+.bud-kpi-card .lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.bud-kpi-card .val{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.bud-kpi-card .sub{font-size:11px;color:var(--text3);margin-top:4px}
+.bud-kpi-card .val.pos{color:var(--ok)}
+.bud-kpi-card .val.neg{color:var(--danger)}
+.bud-section-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin:18px 0 10px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+.bud-item-row{display:grid;grid-template-columns:1fr 140px 110px 80px 36px;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border)}
+.bud-item-row:last-child{border-bottom:none}
+.bud-item-row input,.bud-item-row select{font-size:12.5px;height:32px;padding:0 8px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--text);font-family:inherit;outline:none}
+.bud-item-row input:focus,.bud-item-row select:focus{border-color:var(--black)}
+.bud-add-row{display:flex;align-items:center;gap:6px;padding:8px 0;font-size:12.5px;color:var(--text3);cursor:pointer;border-bottom:0.5px solid var(--border)}
+.bud-add-row:hover{color:var(--text)}
+.bud-total{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--surface2);border-radius:var(--r);margin-top:10px;font-size:13px}
+.bud-total .lbl{color:var(--text2);font-weight:500}
+.bud-total .val{font-weight:700;font-variant-numeric:tabular-nums}
+.bud-del-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:4px;font-size:14px;display:flex;align-items:center;justify-content:center}
+.bud-del-btn:hover{background:var(--danger-bg);color:var(--danger)}
+.bud-summary-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:6px}
+.bud-summary-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.vendor-search-wrap{position:relative;margin-bottom:14px}
+.vendor-search-wrap input{width:100%}
+.vendor-dropdown{position:absolute;top:38px;left:0;right:0;background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--r);box-shadow:var(--shadow-md);z-index:100;max-height:200px;overflow-y:auto;display:none}
+.vendor-dropdown.open{display:block}
+.vendor-option{padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border)}
+.vendor-option:last-child{border-bottom:none}
+.vendor-option:hover{background:var(--surface2)}
+.vendor-summary-card{background:var(--surface2);border-radius:var(--rl);padding:14px 16px;margin-bottom:14px}
+.vendor-summary-card .name{font-size:15px;font-weight:700;margin-bottom:8px}
+.vendor-summary-card .stats{display:flex;gap:16px;flex-wrap:wrap}
+.vendor-summary-card .stat{font-size:12px;color:var(--text2)}
+.vendor-summary-card .stat span{font-weight:600;color:var(--text)}
+.ct-badge{display:inline-flex;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600}
+.ct-direct{background:#DBEAFE;color:#1E40AF}
+.ct-indirect{background:#F5F3FF;color:#5B21B6}
+.ct-status-draft{background:#FEF3C7;color:#92400E}
+.ct-status-pre{background:#DBEAFE;color:#1E40AF}
+.ct-status-done{background:#DCFCE7;color:#166534}
+.doc-chk{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.doc-ok{background:#DCFCE7;color:#166534}
+.doc-no{background:#FEE2E2;color:#991B1B}
+.proj-reg-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+
+/* ══ 프로젝트 관리 시스템 ══════════════════════════ */
+.pm-tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border);margin-bottom:18px}
+.pm-tab{padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);border-bottom:2px solid transparent;font-family:inherit;transition:all .15s}
+.pm-tab:hover{color:var(--text)}.pm-tab.on{color:var(--text);border-bottom-color:var(--black);font-weight:600}
+.proj-filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.proj-filter-row input,.proj-filter-row select{height:34px;padding:0 11px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:12.5px;font-family:inherit;background:var(--surface);color:var(--text);outline:none}
+.proj-filter-row input{flex:1;min-width:130px}
+.proj-filter-row input:focus,.proj-filter-row select:focus{border-color:var(--black)}
+.proj-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-bottom:16px}
+.proj-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rl);padding:16px;cursor:pointer;transition:all .18s;box-shadow:var(--shadow)}
+.proj-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--border2)}
+.proj-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
+.proj-card-name{font-size:14px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+.proj-card-client{font-size:11.5px;color:var(--text2);margin-top:2px}
+.proj-status-badge{padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;flex-shrink:0}
+.psb-proposed{background:#FEF3C7;color:#92400E}
+.psb-active{background:#DBEAFE;color:#1E40AF}
+.psb-done{background:#DCFCE7;color:#166534}
+.proj-card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.proj-meta-tag{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:3px}
+.proj-card-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:10px;border-top:0.5px solid var(--border)}
+.pcki{background:var(--surface2);border-radius:6px;padding:7px 8px}
+.pcki .lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.pcki .val{font-size:13px;font-weight:700}
+.pcki .val.pos{color:var(--ok)}.pcki .val.neg{color:var(--danger)}
+.pcki .val.info{color:var(--info)}
+/* 프로젝트 상세 */
+.proj-hero{background:var(--black);border-radius:var(--rl);padding:22px 24px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px}
+.proj-hero-left .code{font-size:11px;color:rgba(255,255,255,.35);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.proj-hero-left .name{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.02em}
+.proj-hero-left .client{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px}
+.proj-hero-right{display:flex;gap:20px;flex-wrap:wrap}
+.ph-stat{text-align:center}
+.ph-stat .sv{font-size:20px;font-weight:700;color:#fff}
+.ph-stat .sl{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;font-weight:700}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:14px;padding:6px 14px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow);transition:all .15s}
+.back-btn:hover{background:var(--surface2);color:var(--text)}
+/* 예산표 */
+.budget-header-row{display:grid;grid-template-columns:1fr 140px 110px 80px 36px;gap:8px;padding:4px 0;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.budget-item-row{display:grid;grid-template-columns:1fr 140px 110px 80px 36px;gap:8px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)}
+.budget-item-row.rev{grid-template-columns:1fr 140px 80px 36px}
+.budget-item-row input,.budget-item-row select{font-size:12.5px;height:32px;padding:0 8px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--text);font-family:inherit;outline:none}
+.budget-item-row input:focus,.budget-item-row select:focus{border-color:var(--black)}
+.budget-add{display:flex;align-items:center;gap:5px;padding:8px 0;font-size:12.5px;color:var(--text3);cursor:pointer}
+.budget-add:hover{color:var(--text)}
+.budget-total-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:var(--r);margin-top:8px;font-size:13px}
+.profit-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px;background:var(--surface2);border-radius:var(--r);margin-top:12px}
+.ps-item .ps-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.ps-item .ps-val{font-size:17px;font-weight:700}
+/* 계약 관리 */
+.contract-table-wrap{overflow-x:auto;border-radius:var(--rl);border:0.5px solid var(--border);box-shadow:var(--shadow)}
+.ct-row-vendor{font-weight:600;font-size:12.5px}
+.ct-badge{display:inline-flex;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
+.ctb-draft{background:#FEF3C7;color:#92400E}
+.ctb-prepaid{background:#DBEAFE;color:#1E40AF}
+.ctb-done{background:#DCFCE7;color:#166534}
+.ctb-direct{background:#DBEAFE;color:#1E40AF}
+.ctb-indirect{background:#F5F3FF;color:#5B21B6}
+.doc-dot{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.dd-ok{background:#DCFCE7;color:#166534}.dd-no{background:#FEE2E2;color:#991B1B}
+/* 지급 관리 */
+.pay-status-unpaid{background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600}
+.pay-status-partial{background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600}
+.pay-status-done{background:#DCFCE7;color:#166534;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600}
+/* 폼 */
+.form-section-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin:16px 0 10px;padding-bottom:6px;border-bottom:0.5px solid var(--border)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.frow.three{grid-template-columns:1fr 1fr 1fr}
+.frow.single{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
+.fg input,.fg select,.fg textarea{font-size:13px;padding:8px 12px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--text);font-family:inherit;outline:none;height:38px}
+.fg textarea{height:72px;resize:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--black)}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:0.5px solid var(--border)}
+.btn{height:36px;padding:0 18px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-primary{background:var(--black);color:#fff}.btn-primary:hover{background:#333}.btn-primary:disabled{opacity:.4;cursor:default}
+.btn-sec{background:var(--surface);border:0.5px solid var(--border2)!important;border:none;color:var(--text)}.btn-sec:hover{background:var(--surface2)}
+.alert{padding:10px 14px;border-radius:var(--r);font-size:13px;margin-bottom:12px;display:none}
+.alert.show{display:block}
+.alert.ok{background:var(--ok-bg);color:var(--ok)}.alert.err{background:var(--danger-bg);color:var(--danger)}
 </style>
 </head>
 <body>
@@ -208,6 +343,13 @@ tr:hover td{background:#FAFAF8}
     </button>
     <button class="nav-btn" onclick="showPage('cal',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="8" cy="15" r="1"/><circle cx="12" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>캘린더
+    </button>
+    <div class="nav-sec">예산 · 계약</div>
+    <button class="nav-btn" onclick="showPage('proj-dash',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>프로젝트 현황
+    </button>
+    <button class="nav-btn" onclick="showPage('proj-add',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>프로젝트 등록
     </button>
     <div class="nav-sec">등록</div>
     <button class="nav-btn" onclick="showPage('add-task',this)">
@@ -495,6 +637,391 @@ tr:hover td{background:#FAFAF8}
   </div>
 </div>
 
+
+<!-- 예산 관리 -->
+<div id="page-budget" class="page">
+  <div class="ph"><h2>예산 · 계약 관리</h2><p>프로젝트별 예산 편성 및 계약 집행 현황을 관리합니다</p></div>
+
+  <div class="bud-tabs">
+    <button class="bud-tab on" onclick="switchBudTab('summary',this)">프로젝트 요약</button>
+    <button class="bud-tab" onclick="switchBudTab('plan',this)">기안 예산표</button>
+    <button class="bud-tab" onclick="switchBudTab('contract',this)">계약 집행 현황</button>
+    <button class="bud-tab" onclick="switchBudTab('reg-proj',this)">프로젝트 등록</button>
+  </div>
+
+  <!-- ① 프로젝트 요약 -->
+  <div id="bt-summary">
+    <div class="proj-pill-wrap" id="summary-pills"></div>
+    <div class="bud-kpi" id="bud-kpi"></div>
+    <div class="g2">
+      <div class="card"><div class="ct">프로젝트별 수익률</div><div class="chart-wrap"><canvas id="c-bud-proj"></canvas></div></div>
+      <div class="card"><div class="ct">대분류별 비용 배분</div><div id="bud-cat-bars"></div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="ct">매출 vs 비용 vs 이익</div>
+      <div class="chart-wrap"><canvas id="c-bud-compare"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ② 기안 예산표 -->
+  <div id="bt-plan" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="proj-pill-wrap" id="plan-pills" style="margin-bottom:0"></div>
+      <div style="font-size:12px;color:var(--text2)" id="plan-proj-label">프로젝트를 선택하세요</div>
+    </div>
+    <div class="card">
+      <div class="alert" id="msg-budget"></div>
+      <div class="bud-section-title">📈 매출 항목</div>
+      <div style="display:grid;grid-template-columns:1fr 140px 80px 36px;gap:8px;padding:4px 0;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">
+        <span>항목명</span><span>금액 (원)</span><span>비고</span><span></span>
+      </div>
+      <div id="revenue-rows"></div>
+      <div class="bud-add-row" onclick="addBudRow('revenue')">+ 매출 항목 추가</div>
+      <div class="bud-total"><span class="lbl">매출 합계</span><span class="val" id="revenue-total">0원</span></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="bud-section-title">📉 비용 항목</div>
+      <div style="display:grid;grid-template-columns:1fr 140px 110px 80px 36px;gap:8px;padding:4px 0;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">
+        <span>항목명</span><span>금액 (원)</span><span>직접/간접</span><span>비고</span><span></span>
+      </div>
+      <div id="cost-rows"></div>
+      <div class="bud-add-row" onclick="addBudRow('cost')">+ 비용 항목 추가</div>
+      <div class="bud-total"><span class="lbl">비용 합계</span><span class="val" id="cost-total">0원</span></div>
+    </div>
+    <div class="card" style="margin-top:12px;background:var(--surface2)">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">이익 (간접비 기준)</div><div style="font-size:18px;font-weight:700" id="profit-indirect">—</div></div>
+        <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">이익 (직접비 기준)</div><div style="font-size:18px;font-weight:700" id="profit-direct">—</div></div>
+        <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">수익률 (간접비)</div><div style="font-size:18px;font-weight:700" id="rate-indirect">—</div></div>
+        <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">수익률 (직접비)</div><div style="font-size:18px;font-weight:700" id="rate-direct">—</div></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+      <button class="btn btn-sec" onclick="resetBudgetForm()">초기화</button>
+      <button class="btn btn-primary" id="btn-budget-save" onclick="saveBudget()">Sheets에 저장</button>
+    </div>
+  </div>
+
+  <!-- ③ 계약 집행 현황 -->
+  <div id="bt-contract" style="display:none">
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-start">
+      <div class="proj-pill-wrap" id="contract-pills" style="margin-bottom:0;flex:1"></div>
+    </div>
+
+    <!-- 업체 검색 -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="ct">업체별 검색</div>
+      <div class="vendor-search-wrap">
+        <input id="vendor-search" placeholder="업체명 검색..." oninput="filterVendor()" autocomplete="off"
+          style="width:100%;height:36px;padding:0 12px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text);outline:none">
+        <div class="vendor-dropdown" id="vendor-dropdown"></div>
+      </div>
+      <div id="vendor-summary-area"></div>
+    </div>
+
+    <!-- 계약 목록 -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="ct" style="margin-bottom:0">계약 목록</div>
+        <div style="font-size:12px;color:var(--text2)"><span id="contract-count">0</span>건 · 총 <span id="contract-total-amt">0원</span></div>
+      </div>
+      <div class="sr" style="margin-bottom:12px">
+        <select id="cf-status2" onchange="renderContractList()">
+          <option value="">전체 상태</option><option>기안중</option><option>선금 완료</option><option>최종 완료</option>
+        </select>
+        <select id="cf-cat2" onchange="renderContractList()">
+          <option value="">전체 대분류</option>
+          <option>인건 및 출연</option><option>방송 중계 및 기술</option>
+          <option>콘텐츠 및 영상</option><option>기획 및 사전제작</option><option>무대 및 인프라</option>
+        </select>
+        <select id="cf-costtype" onchange="renderContractList()">
+          <option value="">직접/간접</option><option>직접비</option><option>간접비</option>
+        </select>
+      </div>
+      <div class="tw">
+        <table>
+          <colgroup><col style="width:100px"><col style="width:90px"><col><col style="width:65px"><col style="width:105px"><col style="width:105px"><col style="width:55px"><col style="width:70px"></colgroup>
+          <thead><tr><th>업체/성명</th><th>대분류</th><th>계약 내용</th><th>비용구분</th><th style="text-align:right">계약금액</th><th style="text-align:right">선금</th><th>서류</th><th>상태</th></tr></thead>
+          <tbody id="contract-list-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 프로젝트 등록 -->
+  <div id="bt-reg-proj" style="display:none">
+    <div class="card">
+      <div class="ct">새 프로젝트 등록</div>
+      <div class="alert" id="msg-proj"></div>
+      <div class="proj-reg-grid">
+        <div class="form-group"><label>프로젝트명</label><input id="pj-name" placeholder="예: 2026 FSL SPRING"></div>
+        <div class="form-group"><label>연도</label><input id="pj-year" value="2026" placeholder="2026"></div>
+        <div class="form-group"><label>리그 구분</label>
+          <select id="pj-league">
+            <option>FSL</option><option>FFL</option><option>FTB</option>
+            <option>FC PRO</option><option>공통</option><option>기타</option>
+          </select>
+        </div>
+        <div class="form-group"><label>설명 (선택)</label><input id="pj-desc" placeholder="프로젝트 설명"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn-proj" onclick="submitProject()">프로젝트 등록</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="ct">등록된 프로젝트</div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>ID</th><th>프로젝트명</th><th>연도</th><th>리그</th><th>설명</th></tr></thead>
+          <tbody id="proj-list-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 프로젝트 현황 대시보드 -->
+<div id="page-proj-dash" class="page">
+  <div id="proj-list-view">
+    <div class="ph"><h2>프로젝트 현황</h2><p>카드를 클릭하면 상세 내용을 볼 수 있습니다</p></div>
+
+    <!-- KPI 요약 -->
+    <div class="g4" id="pm-kpi-row">
+      <div class="kpi" style="--kpi-c:#111110"><div class="lbl">전체 프로젝트</div><div class="val" id="pm-k-total">—</div></div>
+      <div class="kpi" style="--kpi-c:#1E40AF"><div class="lbl">진행중</div><div class="val" id="pm-k-active">—</div></div>
+      <div class="kpi" style="--kpi-c:#166534"><div class="lbl">총 취급고</div><div class="val" id="pm-k-handling">—</div></div>
+      <div class="kpi" style="--kpi-c:#5B21B6"><div class="lbl">평균 수익률</div><div class="val" id="pm-k-rate">—</div></div>
+    </div>
+
+    <!-- 필터 -->
+    <div class="proj-filter-row">
+      <input id="pf-search" placeholder="프로젝트명 / 광고주 검색..." oninput="filterProjects()">
+      <select id="pf-status" onchange="filterProjects()">
+        <option value="">전체 상태</option><option>제안중</option><option>진행중</option><option>완료</option>
+      </select>
+      <select id="pf-type" onchange="filterProjects()">
+        <option value="">전체 유형</option><option>리그</option><option>광고</option>
+        <option>콘텐츠</option><option>행사</option><option>기타</option>
+      </select>
+      <select id="pf-owner" onchange="filterProjects()"><option value="">전체 담당자</option></select>
+      <select id="pf-month" onchange="filterProjects()">
+        <option value="">전체 기간</option>
+        <option>1월</option><option>2월</option><option>3월</option><option>4월</option>
+        <option>5월</option><option>6월</option><option>7월</option><option>8월</option>
+        <option>9월</option><option>10월</option><option>11월</option><option>12월</option>
+      </select>
+    </div>
+
+    <div class="proj-card-grid" id="proj-card-grid">
+      <div class="empty" style="grid-column:1/-1">연결 후 불러옵니다</div>
+    </div>
+  </div>
+
+  <!-- 프로젝트 상세 뷰 -->
+  <div id="proj-detail-view" style="display:none">
+    <button class="back-btn" onclick="showProjList()">← 목록으로</button>
+    <div class="proj-hero" id="proj-hero"></div>
+
+    <div class="pm-tabs">
+      <button class="pm-tab on" onclick="switchProjTab('budget',this)">기안 예산표</button>
+      <button class="pm-tab" onclick="switchProjTab('contracts',this)">계약 관리</button>
+      <button class="pm-tab" onclick="switchProjTab('payments',this)">지급 현황</button>
+      <button class="pm-tab" onclick="switchProjTab('overview',this)">손익 요약</button>
+    </div>
+
+    <!-- 예산표 탭 -->
+    <div id="pdt-budget">
+      <div class="card">
+        <div class="alert" id="msg-proj-budget"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div class="ct" style="margin-bottom:0">매출 항목</div>
+          <span style="font-size:11px;color:var(--text3)">저장된 항목은 자동 로드됩니다</span>
+        </div>
+        <div class="budget-header-row" style="grid-template-columns:1fr 140px 80px 36px">
+          <span>항목명</span><span>금액 (원)</span><span>비고</span><span></span>
+        </div>
+        <div id="det-rev-rows"></div>
+        <div class="budget-add" onclick="addDetRow('rev')">+ 매출 항목 추가</div>
+        <div class="budget-total-row" style="background:var(--ok-bg)">
+          <span style="font-weight:600;color:var(--ok)">매출 합계</span>
+          <span style="font-weight:700;font-variant-numeric:tabular-nums;color:var(--ok)" id="det-rev-total">0원</span>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="ct">비용 항목</div>
+        <div class="budget-header-row">
+          <span>항목명</span><span>금액 (원)</span><span>직접/간접</span><span>비고</span><span></span>
+        </div>
+        <div id="det-cost-rows"></div>
+        <div class="budget-add" onclick="addDetRow('cost')">+ 비용 항목 추가</div>
+        <div class="budget-total-row" style="background:var(--danger-bg)">
+          <span style="font-weight:600;color:var(--danger)">비용 합계</span>
+          <span style="font-weight:700;font-variant-numeric:tabular-nums;color:var(--danger)" id="det-cost-total">0원</span>
+        </div>
+      </div>
+      <div class="profit-summary" id="det-profit-summary"></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+        <button class="btn btn-sec" onclick="resetDetBudget()">초기화</button>
+        <button class="btn btn-primary" id="btn-det-budget" onclick="saveDetBudget()">Sheets에 저장</button>
+      </div>
+    </div>
+
+    <!-- 계약 관리 탭 -->
+    <div id="pdt-contracts" style="display:none">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+        <button class="btn btn-primary" onclick="showProjTab('add-contract')">+ 계약 등록</button>
+      </div>
+      <div class="contract-table-wrap">
+        <table>
+          <colgroup><col style="width:110px"><col style="width:90px"><col><col style="width:65px"><col style="width:60px"><col style="width:105px"><col style="width:105px"><col style="width:55px"><col style="width:70px"></colgroup>
+          <thead><tr><th>업체명</th><th>대분류</th><th>계약 내용</th><th>비용구분</th><th>지급구분</th><th style="text-align:right">계약금액</th><th style="text-align:right">선금</th><th>서류</th><th>상태</th></tr></thead>
+          <tbody id="det-contract-tbody"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px;font-size:13px;color:var(--text2)">
+        계약 총액 <strong style="margin-left:8px;color:var(--text)" id="det-contract-total">0원</strong>
+      </div>
+    </div>
+
+    <!-- 지급 현황 탭 -->
+    <div id="pdt-payments" style="display:none">
+      <div class="g4" style="margin-bottom:14px" id="pay-kpi"></div>
+      <div class="tw">
+        <table>
+          <colgroup><col style="width:110px"><col style="width:60px"><col style="width:105px"><col style="width:100px"><col style="width:105px"><col style="width:105px"><col style="width:80px"></colgroup>
+          <thead><tr><th>업체명</th><th>구분</th><th>지급예정금액</th><th>지급예정일</th><th>실지급금액</th><th>실지급일</th><th>상태</th></tr></thead>
+          <tbody id="det-payment-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 손익 요약 탭 -->
+    <div id="pdt-overview" style="display:none">
+      <div class="g2">
+        <div class="card"><div class="ct">매출 vs 비용</div><div class="chart-wrap"><canvas id="c-ov-bar"></canvas></div></div>
+        <div class="card"><div class="ct">비용 구성</div><div class="chart-wrap"><canvas id="c-ov-pie"></canvas></div></div>
+      </div>
+      <div class="card" style="margin-top:14px" id="ov-summary-card"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 프로젝트 등록 -->
+<div id="page-proj-add" class="page">
+  <div class="ph"><h2>프로젝트 등록</h2><p>최소 정보만 입력하세요. 예산/비용은 상세 페이지에서 추가합니다</p></div>
+  <div class="card">
+    <div class="alert" id="msg-proj-add"></div>
+    <div class="form-section-title">기본 정보</div>
+    <div class="frow three">
+      <div class="fg"><label>광고주 세부명</label><input id="pa-client" placeholder="예: 넥슨코리아 FC 사업부"></div>
+      <div class="fg"><label>광고주 분류 (기업명)</label><input id="pa-clientgroup" placeholder="예: 넥슨코리아"></div>
+      <div class="fg"><label>프로젝트명</label><input id="pa-name" placeholder="예: 2026 FSL SPRING"></div>
+    </div>
+    <div class="frow three">
+      <div class="fg"><label>담당자</label>
+        <select id="pa-owner">
+          <option>우기</option><option>모찌</option><option>셀린</option>
+          <option>벅자</option><option>레이시</option><option>덴지</option>
+        </select>
+      </div>
+      <div class="fg"><label>진행 상태</label>
+        <select id="pa-status"><option>제안중</option><option>진행중</option><option>완료</option></select>
+      </div>
+      <div class="fg"><label>프로젝트 유형</label>
+        <select id="pa-type"><option>리그</option><option>광고</option><option>콘텐츠</option><option>행사</option><option>기타</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>매출 인식 시작일</label><input type="date" id="pa-start"></div>
+      <div class="fg"><label>매출 인식 종료일</label><input type="date" id="pa-end"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>취급고 (원)</label><input type="number" id="pa-handling" placeholder="0"></div>
+      <div class="fg"><label>비고</label><input id="pa-note" placeholder="추가 메모"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="resetProjForm()">초기화</button>
+      <button class="btn btn-primary" id="btn-proj-add" onclick="submitProjAdd()">프로젝트 등록</button>
+    </div>
+  </div>
+</div>
+
+<!-- 계약 등록 (프로젝트 상세에서 진입) -->
+<div id="page-add-contract" class="page">
+  <div class="ph"><h2>계약 등록</h2><p id="contract-proj-label">프로젝트를 선택하세요</p></div>
+  <div class="card">
+    <div class="alert" id="msg-contract-add"></div>
+    <div class="form-section-title">계약 기본 정보</div>
+    <div class="frow three">
+      <div class="fg"><label>대분류</label>
+        <select id="ca-cat">
+          <option>인건 및 출연</option><option>방송 중계 및 기술</option>
+          <option>콘텐츠 및 영상</option><option>기획 및 사전제작</option><option>무대 및 인프라</option>
+        </select>
+      </div>
+      <div class="fg"><label>중분류</label><input id="ca-subcat" placeholder="예: [인건] 출연"></div>
+      <div class="fg"><label>비용 구분</label>
+        <select id="ca-costtype"><option>직접비</option><option>간접비</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>업체명 / 성명</label><input id="ca-vendor" placeholder="업체명 또는 담당자 성명"></div>
+      <div class="fg"><label>계약 유형</label>
+        <select id="ca-type"><option>용역 계약</option><option>출연 계약</option><option>대관 계약</option><option>변경 합의</option></select>
+      </div>
+    </div>
+    <div class="frow single">
+      <div class="fg"><label>계약 내용</label><textarea id="ca-desc" placeholder="계약 내용을 상세히 입력하세요"></textarea></div>
+    </div>
+    <div class="form-section-title">금액 · 지급</div>
+    <div class="frow three">
+      <div class="fg"><label>계약 금액 (원)</label><input type="number" id="ca-amount" placeholder="0" oninput="calcContractPay()"></div>
+      <div class="fg"><label>지급 구분</label>
+        <select id="ca-paytype" onchange="calcContractPay()"><option>일시지급</option><option>분할지급</option></select>
+      </div>
+      <div class="fg"><label>과세 구분</label>
+        <select id="ca-tax"><option>과세(10%)</option><option>사업소득(3.3%)</option></select>
+      </div>
+    </div>
+    <div class="frow" id="ca-pay-detail">
+      <div class="fg"><label>선금 (원)</label><input type="number" id="ca-prepay" placeholder="자동계산"></div>
+      <div class="fg"><label>선금 예정일</label><input type="date" id="ca-prepaydate"></div>
+    </div>
+    <div class="frow" id="ca-bal-detail">
+      <div class="fg"><label>잔금 (원)</label><input type="number" id="ca-balance" placeholder="자동계산"></div>
+      <div class="fg"><label>잔금 예정일</label><input type="date" id="ca-baldate"></div>
+    </div>
+    <div class="form-section-title">계약 담당자</div>
+    <div class="frow three">
+      <div class="fg"><label>담당자명</label><input id="ca-manager" placeholder="담당자 성명"></div>
+      <div class="fg"><label>연락처</label><input id="ca-phone" placeholder="010-0000-0000"></div>
+      <div class="fg"><label>이메일</label><input id="ca-email" placeholder="example@email.com"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>고용보험</label>
+        <select id="ca-insurance"><option>해당없음</option><option>예술인고용보험</option><option>일반고용보험</option></select>
+      </div>
+      <div class="fg"><label>상태</label>
+        <select id="ca-status"><option>기안중</option><option>선금 완료</option><option>최종 완료</option></select>
+      </div>
+    </div>
+    <div class="form-section-title">서류 체크</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:4px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="ca-est" style="accent-color:var(--black);width:14px;height:14px"> 견적서</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="ca-con" style="accent-color:var(--black);width:14px;height:14px"> 계약서</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="ca-rev1" style="accent-color:var(--black);width:14px;height:14px"> 검토 요청</label>
+      <label style="display:flex;align-items:center;gap=6px;font-size:13px;cursor:pointer"><input type="checkbox" id="ca-rev2" style="accent-color:var(--black);width:14px;height:14px"> 양사 검토</label>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="resetContractForm()">초기화</button>
+      <button class="btn btn-primary" id="btn-contract-add" onclick="submitContractAdd()">계약 등록</button>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <!-- 캘린더 모달 -->
@@ -560,6 +1087,7 @@ async function loadAll(){
     const d=await apiGet({action:'getAll'});
     if(d&&d.ok){
       tasks=d.tasks||[];leaves=d.leaves||[];officials=d.officials||[];
+      initPM({projects:d.projects||[],budgetItems:d.budgetItems||[],contracts:d.contracts||[],payments:d.payments||[]});
       setDot('ok','연결됨 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
       renderDash();
       filtered=tasks.filter(t=>t['업무명']&&String(t['업무명']).trim());
@@ -1028,6 +1556,442 @@ function resetForm(type){
     ['s-content','s-note'].forEach(id=>document.getElementById(id).value='');
   }
 }
+
+// ══════════════════════════════════════════════════════════
+// 프로젝트 관리 시스템
+// ══════════════════════════════════════════════════════════
+let pmProjects=[], pmBudget=[], pmContracts=[], pmPayments=[];
+let selProjId=null, detRevRows=[], detCostRows=[], currentProjTab='budget';
+let addContractProjId=null;
+
+// ── 데이터 초기화 ──────────────────────────────────────────
+function initPM(data){
+  pmProjects = data.projects     || [];
+  pmBudget   = data.budgetItems  || [];
+  pmContracts= data.contracts    || [];
+  pmPayments = data.payments     || [];
+  // 담당자 필터 옵션 채우기
+  const owSel = document.getElementById('pf-owner');
+  if(owSel && owSel.options.length<=1){
+    MEMBERS.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;owSel.appendChild(o);});
+  }
+  renderProjDash();
+}
+
+// ── 유틸 ───────────────────────────────────────────────────
+function getProjBudget(projId){
+  const id=String(projId);
+  const rev  = pmBudget.filter(i=>String(i['프로젝트ID'])===id&&i['종류']==='매출').reduce((a,i)=>a+(parseFloat(i['금액'])||0),0);
+  const dir  = pmBudget.filter(i=>String(i['프로젝트ID'])===id&&i['종류']==='비용'&&i['비용구분']==='직접비').reduce((a,i)=>a+(parseFloat(i['금액'])||0),0);
+  const ind  = pmBudget.filter(i=>String(i['프로젝트ID'])===id&&i['종류']==='비용'&&i['비용구분']==='간접비').reduce((a,i)=>a+(parseFloat(i['금액'])||0),0);
+  const totalCost = dir+ind;
+  const profitDir = rev - totalCost;
+  const profitInd = rev - ind;
+  const rateDir   = rev ? Math.round(profitDir/rev*100) : 0;
+  const rateInd   = rev ? Math.round(profitInd/rev*100) : 0;
+  return {rev, dir, ind, totalCost, profitDir, profitInd, rateDir, rateInd};
+}
+function getProjContracts(projId){ return pmContracts.filter(c=>String(c['프로젝트ID'])===String(projId)); }
+function getProjPayments(projId){ return pmPayments.filter(p=>String(p['프로젝트ID'])===String(projId)); }
+function fmt(n){ return Number(n).toLocaleString()+'원'; }
+function fmtB(n){ return (Math.abs(n)/100000000).toFixed(2)+'억'; }
+function stBadge(st){
+  const cls=st==='진행중'?'psb-active':st==='완료'?'psb-done':'psb-proposed';
+  return `<span class="proj-status-badge ${cls}">${st}</span>`;
+}
+function showAlert(id,text,type){
+  const el=document.getElementById(id);if(!el)return;
+  el.textContent=text;el.className='alert '+type+' show';
+  setTimeout(()=>el.classList.remove('show'),4000);
+}
+function setBtn(id,text,dis){const b=document.getElementById(id);if(!b)return;b.textContent=text;b.disabled=dis;}
+
+// ── 프로젝트 대시보드 ───────────────────────────────────────
+function filterProjects(){
+  const q   = (document.getElementById('pf-search')?.value||'').toLowerCase();
+  const st  = document.getElementById('pf-status')?.value||'';
+  const tp  = document.getElementById('pf-type')?.value||'';
+  const ow  = document.getElementById('pf-owner')?.value||'';
+  const mo  = document.getElementById('pf-month')?.value||'';
+  const filtered = pmProjects.filter(p=>{
+    if(q&&!String(p['프로젝트명']||'').toLowerCase().includes(q)&&!String(p['광고주명']||'').toLowerCase().includes(q)) return false;
+    if(st&&p['상태']!==st) return false;
+    if(tp&&p['유형']!==tp) return false;
+    if(ow&&p['담당자']!==ow) return false;
+    if(mo){
+      const ms=String(p['매출인식시작']||'');
+      const me=String(p['매출인식종료']||'');
+      const moN=parseInt(mo);
+      if(ms&&me){
+        const sm=parseInt(ms.split('-')[1]||'0');
+        const em=parseInt(me.split('-')[1]||'0');
+        if(moN<sm||moN>em) return false;
+      }
+    }
+    return true;
+  });
+  renderProjCards(filtered);
+  renderProjKPI(filtered);
+}
+
+function renderProjDash(){
+  filterProjects();
+}
+
+function renderProjKPI(filtered){
+  const active=filtered.filter(p=>p['상태']==='진행중').length;
+  const totalH=filtered.reduce((a,p)=>a+(parseFloat(p['취급고'])||0),0);
+  const rates=filtered.map(p=>getProjBudget(p.ID).rateDir).filter(r=>r!==0);
+  const avgRate=rates.length?Math.round(rates.reduce((a,r)=>a+r,0)/rates.length):0;
+  document.getElementById('pm-k-total').textContent=filtered.length+'건';
+  document.getElementById('pm-k-active').textContent=active+'건';
+  document.getElementById('pm-k-handling').textContent=totalH>=100000000?fmtB(totalH):fmt(totalH);
+  document.getElementById('pm-k-rate').textContent=avgRate+'%';
+}
+
+function renderProjCards(list){
+  const grid=document.getElementById('proj-card-grid');
+  if(!list.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">프로젝트 없음</div>';return;}
+  grid.innerHTML=list.map(p=>{
+    const bud=getProjBudget(p.ID);
+    const cts=getProjContracts(p.ID);
+    const pays=getProjPayments(p.ID);
+    const ctTotal=cts.reduce((a,c)=>a+(parseFloat(c['계약금액'])||0),0);
+    const payDone=pays.filter(py=>py['지급상태']==='완료').reduce((a,py)=>a+(parseFloat(py['실지급금액'])||0),0);
+    const ctRate=bud.totalCost?Math.round(ctTotal/bud.totalCost*100):0;
+    const payRate=ctTotal?Math.round(payDone/ctTotal*100):0;
+    return `<div class="proj-card" onclick="showProjDetail('${p.ID}')">
+      <div class="proj-card-header">
+        <div>
+          <div class="proj-card-name">${p['프로젝트명']||'(이름 없음)'}</div>
+          <div class="proj-card-client">${p['광고주명']||''} ${p['광고주분류']?'· '+p['광고주분류']:''}</div>
+        </div>
+        ${stBadge(p['상태']||'제안중')}
+      </div>
+      <div class="proj-card-meta">
+        <span class="proj-meta-tag">👤 ${p['담당자']||'—'}</span>
+        <span class="proj-meta-tag">📁 ${p['유형']||'—'}</span>
+        ${p['매출인식시작']?`<span class="proj-meta-tag">📅 ${p['매출인식시작']} ~ ${p['매출인식종료']||''}</span>`:''}
+      </div>
+      <div class="proj-card-kpi">
+        <div class="pcki"><div class="lbl">취급고</div><div class="val">${p['취급고']?(parseFloat(p['취급고'])/100000000).toFixed(1)+'억':'—'}</div></div>
+        <div class="pcki"><div class="lbl">수익률(직접)</div><div class="val ${bud.rateDir>=0?'pos':'neg'}">${bud.rateDir?bud.rateDir+'%':'—'}</div></div>
+        <div class="pcki"><div class="lbl">계약 집행</div><div class="val info">${ctRate?ctRate+'%':'—'}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── 프로젝트 상세 ──────────────────────────────────────────
+function showProjDetail(id){
+  selProjId=id;
+  const p=pmProjects.find(p=>String(p.ID)===String(id));
+  if(!p) return;
+  document.getElementById('proj-list-view').style.display='none';
+  document.getElementById('proj-detail-view').style.display='block';
+  const bud=getProjBudget(id);
+  document.getElementById('proj-hero').innerHTML=`
+    <div class="proj-hero-left">
+      <div class="code">${p['코드']||'PRJ-????'} · ${p['유형']||''}</div>
+      <div class="name">${p['프로젝트명']||''}</div>
+      <div class="client">${p['광고주명']||''} ${p['광고주분류']?'| '+p['광고주분류']:''}</div>
+    </div>
+    <div class="proj-hero-right">
+      ${stBadge(p['상태']||'제안중')}
+      <div class="ph-stat"><div class="sv">${p['담당자']||'—'}</div><div class="sl">담당자</div></div>
+      <div class="ph-stat"><div class="sv">${bud.rev?fmtB(bud.rev):'—'}</div><div class="sl">매출</div></div>
+      <div class="ph-stat"><div class="sv" style="color:${bud.rateDir>=0?'#4ade80':'#f87171'}">${bud.rateDir?bud.rateDir+'%':'—'}</div><div class="sl">수익률</div></div>
+      <div class="ph-stat"><div class="sv">${getProjContracts(id).length}건</div><div class="sl">계약</div></div>
+    </div>`;
+  switchProjTab('budget', document.querySelector('.pm-tab'));
+}
+
+function showProjList(){
+  document.getElementById('proj-list-view').style.display='block';
+  document.getElementById('proj-detail-view').style.display='none';
+  selProjId=null;
+}
+
+function switchProjTab(tab, el){
+  ['pdt-budget','pdt-contracts','pdt-payments','pdt-overview'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+  document.querySelectorAll('.pm-tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pdt-'+tab).style.display='block';
+  currentProjTab=tab;
+  if(el) el.classList.add('on');
+  if(tab==='budget')    loadDetBudget();
+  if(tab==='contracts') loadDetContracts();
+  if(tab==='payments')  loadDetPayments();
+  if(tab==='overview')  loadDetOverview();
+}
+
+// ── 예산표 탭 ──────────────────────────────────────────────
+function loadDetBudget(){
+  const id=String(selProjId);
+  detRevRows  = pmBudget.filter(i=>String(i['프로젝트ID'])===id&&i['종류']==='매출').map(i=>({name:i['항목명'],amount:i['금액'],note:i['비고']}));
+  detCostRows = pmBudget.filter(i=>String(i['프로젝트ID'])===id&&i['종류']==='비용').map(i=>({name:i['항목명'],amount:i['금액'],costType:i['비용구분'],note:i['비고']}));
+  if(!detRevRows.length)  detRevRows  = [{name:'',amount:'',note:''}];
+  if(!detCostRows.length) detCostRows = [{name:'',amount:'',costType:'직접비',note:''}];
+  renderDetBudgetRows();
+}
+
+function renderDetBudgetRows(){
+  document.getElementById('det-rev-rows').innerHTML=detRevRows.map((r,i)=>`
+    <div class="budget-item-row rev">
+      <input placeholder="항목명" value="${r.name||''}" oninput="detRevRows[${i}].name=this.value">
+      <input type="number" placeholder="0" value="${r.amount||''}" oninput="detRevRows[${i}].amount=this.value;updateDetCalc()">
+      <input placeholder="비고" value="${r.note||''}">
+      <button class="btn btn-sec" style="height:32px;padding:0 8px;font-size:12px" onclick="delDetRow('rev',${i})">✕</button>
+    </div>`).join('');
+  document.getElementById('det-cost-rows').innerHTML=detCostRows.map((r,i)=>`
+    <div class="budget-item-row">
+      <input placeholder="항목명" value="${r.name||''}" oninput="detCostRows[${i}].name=this.value">
+      <input type="number" placeholder="0" value="${r.amount||''}" oninput="detCostRows[${i}].amount=this.value;updateDetCalc()">
+      <select onchange="detCostRows[${i}].costType=this.value;updateDetCalc()">
+        <option ${(r.costType||'직접비')==='직접비'?'selected':''}>직접비</option>
+        <option ${r.costType==='간접비'?'selected':''}>간접비</option>
+      </select>
+      <input placeholder="비고" value="${r.note||''}">
+      <button class="btn btn-sec" style="height:32px;padding:0 8px;font-size:12px" onclick="delDetRow('cost',${i})">✕</button>
+    </div>`).join('');
+  updateDetCalc();
+}
+function addDetRow(t){
+  if(t==='rev') detRevRows.push({name:'',amount:'',note:''});
+  else detCostRows.push({name:'',amount:'',costType:'직접비',note:''});
+  renderDetBudgetRows();
+}
+function delDetRow(t,i){
+  if(t==='rev'){detRevRows.splice(i,1);if(!detRevRows.length)detRevRows=[{name:'',amount:'',note:''}];}
+  else{detCostRows.splice(i,1);if(!detCostRows.length)detCostRows=[{name:'',amount:'',costType:'직접비',note:''}];}
+  renderDetBudgetRows();
+}
+function updateDetCalc(){
+  const rev  = detRevRows.reduce((a,r)=>a+(parseFloat(r.amount)||0),0);
+  const dir  = detCostRows.filter(r=>r.costType==='직접비').reduce((a,r)=>a+(parseFloat(r.amount)||0),0);
+  const ind  = detCostRows.filter(r=>r.costType==='간접비').reduce((a,r)=>a+(parseFloat(r.amount)||0),0);
+  const tot  = dir+ind;
+  const pDir = rev-tot, pInd = rev-ind;
+  const rDir = rev?Math.round(pDir/rev*100):0, rInd = rev?Math.round(pInd/rev*100):0;
+  document.getElementById('det-rev-total').textContent=fmt(rev);
+  document.getElementById('det-cost-total').textContent=fmt(tot);
+  document.getElementById('det-profit-summary').innerHTML=`
+    <div class="ps-item"><div class="ps-lbl">이익 (직접비 기준)</div><div class="ps-val" style="color:${pDir>=0?'var(--ok)':'var(--danger)'}">${fmt(pDir)}</div></div>
+    <div class="ps-item"><div class="ps-lbl">이익 (간접비 기준)</div><div class="ps-val" style="color:${pInd>=0?'var(--ok)':'var(--danger)'}">${fmt(pInd)}</div></div>
+    <div class="ps-item"><div class="ps-lbl">수익률 (직접비)</div><div class="ps-val" style="color:${rDir>=0?'var(--ok)':'var(--danger)'}">${rDir}%</div></div>
+    <div class="ps-item"><div class="ps-lbl">수익률 (간접비 포함)</div><div class="ps-val" style="color:${rInd>=0?'var(--ok)':'var(--danger)'}">${rInd}%</div></div>`;
+}
+function resetDetBudget(){
+  detRevRows=[{name:'',amount:'',note:''}];
+  detCostRows=[{name:'',amount:'',costType:'직접비',note:''}];
+  renderDetBudgetRows();
+}
+async function saveDetBudget(){
+  if(!API){alert('먼저 API를 연결하세요');return}
+  if(!selProjId){alert('프로젝트를 선택하세요');return}
+  setBtn('btn-det-budget','저장 중...',true);
+  try{
+    const rows=[
+      ...detRevRows.filter(r=>r.name&&r.amount).map(r=>({projId:selProjId,itemType:'매출',itemName:r.name,amount:r.amount,costType:'',note:r.note||''})),
+      ...detCostRows.filter(r=>r.name&&r.amount).map(r=>({projId:selProjId,itemType:'비용',itemName:r.name,amount:r.amount,costType:r.costType,note:r.note||''})),
+    ];
+    let ok=0;
+    for(const row of rows){const d=await apiGet({action:'addBudgetItem',...row});if(d&&d.ok)ok++;}
+    showAlert('msg-proj-budget',`✓ ${ok}개 항목 저장 완료`,'ok');
+    await loadAll();
+  }catch(e){showAlert('msg-proj-budget','오류: '+e.message,'err');}
+  setBtn('btn-det-budget','Sheets에 저장',false);
+}
+
+// ── 계약 관리 탭 ───────────────────────────────────────────
+function loadDetContracts(){
+  const list=getProjContracts(selProjId);
+  const total=list.reduce((a,c)=>a+(parseFloat(c['계약금액'])||0),0);
+  document.getElementById('det-contract-total').textContent=fmt(total);
+  document.getElementById('det-contract-tbody').innerHTML=list.length?list.map(c=>{
+    const amt=parseFloat(c['계약금액'])||0;
+    const pre=parseFloat(c['선금'])||0;
+    const st=c['상태']||'';
+    const stCls=st==='최종 완료'?'ctb-done':st==='선금 완료'?'ctb-prepaid':'ctb-draft';
+    const ct=c['비용구분']||'';
+    const e=c['견적서']===true||c['견적서']==='TRUE';
+    const k=c['계약서']===true||c['계약서']==='TRUE';
+    const r=c['양사검토']===true||c['양사검토']==='TRUE';
+    return `<tr>
+      <td class="ct-row-vendor">${c['업체명']||''}</td>
+      <td style="font-size:11.5px;color:var(--text2)">${c['대분류']||''}</td>
+      <td style="font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:0">${c['계약내용']||''}</td>
+      <td>${ct?`<span class="ct-badge ${ct==='직접비'?'ctb-direct':'ctb-indirect'}">${ct}</span>`:''}</td>
+      <td style="font-size:11.5px;color:var(--text2)">${c['지급구분']||''}</td>
+      <td style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">${amt.toLocaleString()}</td>
+      <td style="text-align:right;color:var(--info);font-variant-numeric:tabular-nums">${pre?pre.toLocaleString():'—'}</td>
+      <td><span class="doc-dot ${e?'dd-ok':'dd-no'}" title="견적서">${e?'✓':'✗'}</span><span class="doc-dot ${k?'dd-ok':'dd-no'}" title="계약서">${k?'✓':'✗'}</span><span class="doc-dot ${r?'dd-ok':'dd-no'}" title="양사검토">${r?'✓':'✗'}</span></td>
+      <td><span class="ct-badge ${stCls}">${st}</span></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="9" class="empty">계약 없음</td></tr>';
+}
+
+// ── 지급 현황 탭 ───────────────────────────────────────────
+function loadDetPayments(){
+  const list=getProjPayments(selProjId);
+  const planned=list.reduce((a,p)=>a+(parseFloat(p['지급예정금액'])||0),0);
+  const paid=list.filter(p=>p['지급상태']==='완료').reduce((a,p)=>a+(parseFloat(p['실지급금액'])||0),0);
+  const unpaid=list.filter(p=>p['지급상태']==='미지급').reduce((a,p)=>a+(parseFloat(p['지급예정금액'])||0),0);
+  const rate=planned?Math.round(paid/planned*100):0;
+  document.getElementById('pay-kpi').innerHTML=`
+    <div class="kpi" style="--kpi-c:#111110"><div class="lbl">총 지급 예정</div><div class="val">${fmtB(planned)}</div></div>
+    <div class="kpi" style="--kpi-c:#166534"><div class="lbl">지급 완료</div><div class="val">${fmtB(paid)}</div><div class="sub">집행률 ${rate}%</div></div>
+    <div class="kpi" style="--kpi-c:#991B1B"><div class="lbl">미지급</div><div class="val">${fmtB(unpaid)}</div></div>
+    <div class="kpi" style="--kpi-c:#1E40AF"><div class="lbl">지급 건수</div><div class="val">${list.length}건</div></div>`;
+  document.getElementById('det-payment-tbody').innerHTML=list.length?list.map(p=>{
+    const st=p['지급상태']||'미지급';
+    const stCls=st==='완료'?'pay-status-done':st==='부분지급'?'pay-status-partial':'pay-status-unpaid';
+    return `<tr>
+      <td style="font-weight:600">${p['업체명']||''}</td>
+      <td style="font-size:11.5px;color:var(--text2)">${p['지급구분']||''}</td>
+      <td style="text-align:right;font-variant-numeric:tabular-nums">${(parseFloat(p['지급예정금액'])||0).toLocaleString()}</td>
+      <td style="color:var(--text2)">${p['지급예정일']||'—'}</td>
+      <td style="text-align:right;font-variant-numeric:tabular-nums;color:var(--ok)">${p['실지급금액']?(parseFloat(p['실지급금액'])||0).toLocaleString():'—'}</td>
+      <td style="color:var(--text2)">${p['실지급일']||'—'}</td>
+      <td><span class="${stCls}">${st}</span></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="7" class="empty">지급 항목 없음</td></tr>';
+}
+
+// ── 손익 요약 탭 ───────────────────────────────────────────
+function loadDetOverview(){
+  const bud=getProjBudget(selProjId);
+  const cts=getProjContracts(selProjId);
+  const ctTotal=cts.reduce((a,c)=>a+(parseFloat(c['계약금액'])||0),0);
+  const pays=getProjPayments(selProjId);
+  const payDone=pays.filter(p=>p['지급상태']==='완료').reduce((a,p)=>a+(parseFloat(p['실지급금액'])||0),0);
+  mkChart('c-ov-bar','bar',{
+    labels:['매출','직접비','간접비','이익(직접)','이익(간접)'],
+    datasets:[{data:[bud.rev,bud.dir,bud.ind,Math.max(bud.profitDir,0),Math.max(bud.profitInd,0)],
+      backgroundColor:['#166534','#991B1B','#5B21B6','#1E40AF','#0891B2'],borderRadius:4,barThickness:28}]
+  },{scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'#F0F0EE'},ticks:{callback:v=>(v/100000000).toFixed(1)+'억',font:{size:10}}}}});
+  const catAmt={};
+  pmBudget.filter(i=>String(i['프로젝트ID'])===String(selProjId)&&i['종류']==='비용')
+    .forEach(i=>{ catAmt[i['항목명']]=(catAmt[i['항목명']]||0)+(parseFloat(i['금액'])||0); });
+  const cats=Object.entries(catAmt).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  mkChart('c-ov-pie','doughnut',{
+    labels:cats.map(c=>c[0]),
+    datasets:[{data:cats.map(c=>c[1]),backgroundColor:['#111110','#444','#666','#888','#AAA','#CCC'],borderWidth:0}]
+  },{legend:true,plugins:{legend:{position:'right',labels:{font:{size:10},usePointStyle:true,padding:10}}}});
+  const ctRate=bud.totalCost?Math.round(ctTotal/bud.totalCost*100):0;
+  const payRate=ctTotal?Math.round(payDone/ctTotal*100):0;
+  document.getElementById('ov-summary-card').innerHTML=`
+    <div class="ct">손익 요약</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+      <div class="pcki"><div class="lbl">예산 매출</div><div class="val">${bud.rev?fmtB(bud.rev):'—'}</div></div>
+      <div class="pcki"><div class="lbl">예산 비용 (직접)</div><div class="val">${fmtB(bud.dir)}</div></div>
+      <div class="pcki"><div class="lbl">예산 비용 (간접)</div><div class="val">${fmtB(bud.ind)}</div></div>
+      <div class="pcki"><div class="lbl">수익률 (직접)</div><div class="val ${bud.rateDir>=0?'pos':'neg'}">${bud.rateDir}%</div></div>
+      <div class="pcki"><div class="lbl">계약 총액</div><div class="val info">${fmtB(ctTotal)}</div></div>
+      <div class="pcki"><div class="lbl">계약 집행률</div><div class="val info">${ctRate}%</div></div>
+      <div class="pcki"><div class="lbl">실 지급액</div><div class="val">${fmtB(payDone)}</div></div>
+      <div class="pcki"><div class="lbl">지급 완료율</div><div class="val">${payRate}%</div></div>
+    </div>`;
+}
+
+// ── 프로젝트 등록 ──────────────────────────────────────────
+function resetProjForm(){
+  ['pa-client','pa-clientgroup','pa-name','pa-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const today=new Date().toISOString().split('T')[0];
+  ['pa-start','pa-end'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=today;});
+  const h=document.getElementById('pa-handling');if(h)h.value='';
+}
+async function submitProjAdd(){
+  if(!API){alert('먼저 API를 연결하세요');return}
+  const name=document.getElementById('pa-name').value.trim();
+  if(!name){alert('프로젝트명을 입력하세요');return}
+  setBtn('btn-proj-add','등록 중...',true);
+  try{
+    const d=await apiGet({action:'addProject',
+      name, client:document.getElementById('pa-client').value,
+      clientGroup:document.getElementById('pa-clientgroup').value,
+      owner:document.getElementById('pa-owner').value,
+      status:document.getElementById('pa-status').value,
+      ptype:document.getElementById('pa-type').value,
+      periodStart:document.getElementById('pa-start').value,
+      periodEnd:document.getElementById('pa-end').value,
+      handling:document.getElementById('pa-handling').value,
+      note:document.getElementById('pa-note').value,
+    });
+    if(d&&d.ok){showAlert('msg-proj-add','✓ '+d.message,'ok');resetProjForm();await loadAll();}
+    else showAlert('msg-proj-add','오류: '+(d?.error||''),'err');
+  }catch(e){showAlert('msg-proj-add','오류: '+e.message,'err');}
+  setBtn('btn-proj-add','프로젝트 등록',false);
+}
+
+// ── 계약 등록 ──────────────────────────────────────────────
+function showProjTab(tab){
+  addContractProjId=selProjId;
+  const p=pmProjects.find(p=>String(p.ID)===String(selProjId));
+  const lbl=document.getElementById('contract-proj-label');
+  if(lbl&&p) lbl.textContent='프로젝트: '+p['프로젝트명'];
+  showPage(tab===('add-contract')?'add-contract':tab, null);
+  document.querySelectorAll('.nav-btn').forEach(n=>n.classList.remove('active'));
+}
+function calcContractPay(){
+  const amt=parseFloat(document.getElementById('ca-amount')?.value)||0;
+  const type=document.getElementById('ca-paytype')?.value;
+  if(type==='분할지급'){
+    const pre=document.getElementById('ca-prepay');const bal=document.getElementById('ca-balance');
+    if(pre&&!pre.value) pre.value=Math.round(amt/2);
+    if(bal&&!bal.value) bal.value=Math.round(amt/2);
+  }
+}
+function resetContractForm(){
+  ['ca-vendor','ca-subcat','ca-desc','ca-manager','ca-phone','ca-email'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['ca-amount','ca-prepay','ca-balance'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['ca-est','ca-con','ca-rev1','ca-rev2'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
+}
+async function submitContractAdd(){
+  if(!API){alert('먼저 API를 연결하세요');return}
+  if(!addContractProjId){alert('프로젝트를 선택 후 계약을 등록하세요');return}
+  const vendor=document.getElementById('ca-vendor')?.value.trim();
+  if(!vendor){alert('업체명을 입력하세요');return}
+  setBtn('btn-contract-add','등록 중...',true);
+  try{
+    const d=await apiGet({action:'addContract',
+      projId:addContractProjId,
+      category:document.getElementById('ca-cat')?.value,
+      subcategory:document.getElementById('ca-subcat')?.value,
+      vendor, contractType:document.getElementById('ca-type')?.value,
+      description:document.getElementById('ca-desc')?.value,
+      amount:document.getElementById('ca-amount')?.value,
+      insurance:document.getElementById('ca-insurance')?.value,
+      payType:document.getElementById('ca-paytype')?.value,
+      prepay:document.getElementById('ca-prepay')?.value,
+      prepayDate:document.getElementById('ca-prepaydate')?.value,
+      balance:document.getElementById('ca-balance')?.value,
+      balanceDate:document.getElementById('ca-baldate')?.value,
+      taxType:document.getElementById('ca-tax')?.value,
+      hasEstimate:String(document.getElementById('ca-est')?.checked),
+      hasContract:String(document.getElementById('ca-con')?.checked),
+      reviewReq:String(document.getElementById('ca-rev1')?.checked),
+      bothReview:String(document.getElementById('ca-rev2')?.checked),
+      manager:document.getElementById('ca-manager')?.value,
+      phone:document.getElementById('ca-phone')?.value,
+      email:document.getElementById('ca-email')?.value,
+      status:document.getElementById('ca-status')?.value,
+    });
+    if(d&&d.ok){
+      showAlert('msg-contract-add','✓ '+d.message,'ok');
+      resetContractForm();
+      await loadAll();
+      // 계약 등록 후 해당 프로젝트 계약 탭으로 이동
+      if(addContractProjId){
+        showPage('proj-dash',document.querySelector('.nav-btn'));
+        setTimeout(()=>{showProjDetail(addContractProjId);switchProjTab('contracts',document.querySelectorAll('.pm-tab')[1]);},300);
+      }
+    } else showAlert('msg-contract-add','오류: '+(d?.error||''),'err');
+  }catch(e){showAlert('msg-contract-add','오류: '+e.message,'err');}
+  setBtn('btn-contract-add','계약 등록',false);
+}
+
 </script>
 </body>
 </html>
