@@ -1069,6 +1069,14 @@ async function apiGet(p){
   const r=await fetch(API+'?'+new URLSearchParams(p));
   return r.json();
 }
+async function apiPost(p){
+  const r=await fetch(API,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(p)
+  });
+  return r.json();
+}
 async function connect(){
   const url=document.getElementById('api-url').value.trim();
   if(!url){alert('API URL을 입력하세요');return}
@@ -1469,7 +1477,7 @@ async function submitTask(){
   if(!name){alert('업무명을 입력하세요');return}
   setBtn('btn-task','등록 중...',true);
   try{
-    const d=await apiGet({
+    const d=await apiPost({
       action:'addTask',
       proj:document.getElementById('t-proj').value,
       type:document.getElementById('t-type').value,
@@ -1497,7 +1505,7 @@ async function submitLeave(){
   if(!API){alert('먼저 API를 연결하세요');return}
   setBtn('btn-leave','등록 중...',true);
   try{
-    const d=await apiGet({
+    const d=await apiPost({
       action:'addLeave',
       date:document.getElementById('l-date').value,
       member:document.getElementById('l-member').value,
@@ -1521,7 +1529,7 @@ async function submitSched(){
   if(!API){alert('먼저 API를 연결하세요');return}
   setBtn('btn-sched','등록 중...',true);
   try{
-    const d=await apiGet({
+    const d=await apiPost({
       action:'addOfficial',
       proj:document.getElementById('s-proj').value,
       content:document.getElementById('s-content').value,
@@ -1797,7 +1805,7 @@ async function saveDetBudget(){
       ...detCostRows.filter(r=>r.name&&r.amount).map(r=>({projId:selProjId,itemType:'비용',itemName:r.name,amount:r.amount,costType:r.costType,note:r.note||''})),
     ];
     let ok=0;
-    for(const row of rows){const d=await apiGet({action:'addBudgetItem',...row});if(d&&d.ok)ok++;}
+    for(const row of rows){const d=await apiPost({action:'addBudgetItem',...row});if(d&&d.ok)ok++;}
     showAlert('msg-proj-budget',`✓ ${ok}개 항목 저장 완료`,'ok');
     await loadAll();
   }catch(e){showAlert('msg-proj-budget','오류: '+e.message,'err');}
@@ -1908,7 +1916,7 @@ async function submitProjAdd(){
   if(!name){alert('프로젝트명을 입력하세요');return}
   setBtn('btn-proj-add','등록 중...',true);
   try{
-    const d=await apiGet({action:'addProject',
+    const d=await apiPost({action:'addProject',
       name, client:document.getElementById('pa-client').value,
       clientGroup:document.getElementById('pa-clientgroup').value,
       owner:document.getElementById('pa-owner').value,
@@ -1955,7 +1963,7 @@ async function submitContractAdd(){
   if(!vendor){alert('업체명을 입력하세요');return}
   setBtn('btn-contract-add','등록 중...',true);
   try{
-    const d=await apiGet({action:'addContract',
+    const d=await apiPost({action:'addContract',
       projId:addContractProjId,
       category:document.getElementById('ca-cat')?.value,
       subcategory:document.getElementById('ca-subcat')?.value,
