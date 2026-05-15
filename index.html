@@ -172,6 +172,17 @@ tr:hover td{background:#FAFAF8}
 .empty{text-align:center;padding:36px;color:var(--text3);font-size:13px}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ── 삭제 표시 ───────────────────────────── */
+.tr-deleted td{opacity:.35;text-decoration:line-through}
+.tr-deleted .del-btn{opacity:1!important;text-decoration:none!important}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:4px;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.del-btn:hover{background:var(--danger-bg);color:var(--danger)}
+.del-restore{background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:4px;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.del-restore:hover{background:var(--ok-bg);color:var(--ok)}
+.del-notice{background:var(--warn-bg);border:1px solid #FDE68A;border-radius:var(--r);padding:10px 14px;font-size:12.5px;color:var(--warn);margin-bottom:12px;display:none;align-items:center;gap:8px}
+.del-notice.show{display:flex}
+.del-count{font-weight:700}
 </style>
 </head>
 <body>
@@ -244,11 +255,16 @@ tr:hover td{background:#FAFAF8}
     <select id="q-proj" onchange="filterTasks()"><option value="">전체 프로젝트</option></select>
     <select id="q-prio" onchange="filterTasks()"><option value="">전체 중요도</option><option>High</option><option>Mid</option><option>Low</option></select>
   </div>
+  <div class="del-notice" id="del-notice">
+    <span>🗑</span>
+    <span><span class="del-count" id="del-count">0</span>개 항목이 삭제 표시됨 — Sheets에서 해당 ID 행을 직접 삭제 후 새로고침하세요</span>
+    <button onclick="clearDeleted()" style="margin-left:auto;background:none;border:1px solid var(--warn);border-radius:4px;padding:3px 10px;font-size:11.5px;color:var(--warn);cursor:pointer;font-family:inherit">표시 초기화</button>
+  </div>
   <div class="tw">
     <table>
-      <colgroup><col style="width:46px"><col style="width:108px"><col><col style="width:58px"><col style="width:50px"><col style="width:88px"><col style="width:96px"><col style="width:58px"></colgroup>
-      <thead><tr><th>ID</th><th>프로젝트</th><th>업무명</th><th>담당자</th><th>중요도</th><th>마감일</th><th>진행률</th><th>상태</th></tr></thead>
-      <tbody id="task-tbody"><tr><td colspan="8" class="empty">연결 후 불러옵니다</td></tr></tbody>
+      <colgroup><col style="width:46px"><col style="width:108px"><col><col style="width:58px"><col style="width:50px"><col style="width:88px"><col style="width:96px"><col style="width:58px"><col style="width:42px"></colgroup>
+      <thead><tr><th>ID</th><th>프로젝트</th><th>업무명</th><th>담당자</th><th>중요도</th><th>마감일</th><th>진행률</th><th>상태</th><th></th></tr></thead>
+      <tbody id="task-tbody"><tr><td colspan="9" class="empty">연결 후 불러옵니다</td></tr></tbody>
     </table>
   </div>
   <div class="pag"><button onclick="pgPrev()">이전</button><span id="pg-info">—</span><button onclick="pgNext()">다음</button></div>
@@ -482,12 +498,36 @@ function filterTasks(){
     (!pj||t['프로젝트']===pj)&&(!pr||t['중요도']===pr));
   pg=0;renderTaskPage();
 }
+// 삭제 표시된 ID 세트 (세션 내 유지)
+const deletedIds=new Set();
+
+function markDelete(id){
+  if(deletedIds.has(id)){deletedIds.delete(id);}
+  else{deletedIds.add(id);}
+  updateDelNotice();
+  renderTaskPage();
+}
+function clearDeleted(){
+  deletedIds.clear();
+  updateDelNotice();
+  renderTaskPage();
+}
+function updateDelNotice(){
+  const n=document.getElementById('del-notice');
+  const c=document.getElementById('del-count');
+  c.textContent=deletedIds.size;
+  if(deletedIds.size>0)n.classList.add('show');
+  else n.classList.remove('show');
+}
+
 function renderTaskPage(){
   const sl=filtered.slice(pg*pgSz,(pg+1)*pgSz);
   document.getElementById('task-tbody').innerHTML=sl.length?sl.map(t=>{
     const prog=parseInt(t['진행률'])||0;const st=t['상태']||'';const pr=t['중요도']||'';
-    return `<tr>
-      <td style="color:var(--text3);font-size:11px">${t['ID']||''}</td>
+    const id=String(t['ID']||'');
+    const isDel=deletedIds.has(id);
+    return `<tr class="${isDel?'tr-deleted':''}">
+      <td style="color:var(--text3);font-size:11px">${id}</td>
       <td class="clip" style="font-size:11.5px;color:var(--text2)">${t['프로젝트']||''}</td>
       <td class="clip" style="font-weight:500">${t['업무명']||''}</td>
       <td>${t['담당자']||''}</td>
@@ -495,8 +535,9 @@ function renderTaskPage(){
       <td style="font-size:11.5px;color:var(--text2)">${t['마감기한']||''}</td>
       <td><div class="pw"><div class="pb"><div class="pf" style="width:${prog}%"></div></div><span class="pl">${prog}%</span></div></td>
       <td><span class="badge ${st==='완료'?'bd-done':st==='진행중'?'bd-go':'bd-wait'}">${st}</span></td>
+      <td><button class="del-btn ${isDel?'del-restore':''}" onclick="markDelete('${id}')" title="${isDel?'삭제 취소':'삭제 표시'}">${isDel?'↩':'🗑'}</button></td>
     </tr>`;
-  }).join(''):'<tr><td colspan="8" class="empty">결과 없음</td></tr>';
+  }).join(''):'<tr><td colspan="9" class="empty">결과 없음</td></tr>';
   const tot=filtered.length,pages=Math.ceil(tot/pgSz)||1;
   document.getElementById('pg-info').textContent=`${pg+1} / ${pages} (총 ${tot}건)`;
   document.querySelectorAll('.pag button')[0].disabled=pg===0;
@@ -640,15 +681,28 @@ function renderCal(){
     const [y,mo,day]=[parseInt(pts[0]),parseInt(pts[1])-1,parseInt(pts[2])];
     if(y===calY&&mo===calM){if(!offMap[day])offMap[day]=[];offMap[day].push(o);}
   });
+  // 외근 중복 방지: 날짜+담당자 조합으로 이미 처리한 항목 추적
+  const lvSeen=new Set(), outSeen=new Set();
   leaves.forEach(l=>{
     const d=l['날짜'];if(!d)return;
     const pts=String(d).split('-');if(pts.length<3)return;
     const [y,mo,day]=[parseInt(pts[0]),parseInt(pts[1])-1,parseInt(pts[2])];
     if(y===calY&&mo===calM){
-      if(l['종류']==='외근'){
-        if(!outMap[day])outMap[day]=new Set();outMap[day].add(l['담당자']);
+      const type=String(l['종류']||'').trim();
+      const member=String(l['담당자']||'').trim();
+      const key=`${day}_${member}_${type}`;
+      if(type==='외근'){
+        if(!outSeen.has(key)){
+          outSeen.add(key);
+          if(!outMap[day])outMap[day]=new Set();
+          outMap[day].add(member);
+        }
       } else {
-        if(!lvMap[day])lvMap[day]=new Set();lvMap[day].add(l['담당자']);
+        if(!lvSeen.has(key)){
+          lvSeen.add(key);
+          if(!lvMap[day])lvMap[day]=new Set();
+          lvMap[day].add(member);
+        }
       }
     }
   });
@@ -673,10 +727,10 @@ function renderCal(){
       cell.onclick=()=>openModal(dn2,ds,offMap[dn2]||[],lvMap[dn2]||new Set(),outMap[dn2]||new Set(),taskMap[dn2]||[]);
     }
     let html=`<div class="cdn">${dn}</div>`;
-    if(inM&&offMap[dn2])offMap[dn2].slice(0,2).forEach(o=>{
+    if(inM&&offMap[dn2])offMap[dn2].slice(0,3).forEach(o=>{
       const p=(o['프로젝트']||'').trim();
       const ec=p==='FSL'?'ev-fsl':p==='FFL'?'ev-ffl':p==='FTB'?'ev-ftb':p==='FC PRO'?'ev-fco':'ev-lv';
-      html+=`<div class="cev ${ec}">${p} ${(o['내용']||'').slice(0,8)}</div>`;
+      html+=`<div class="cev ${ec}">${p} ${o['내용']||''}</div>`;
     });
     if(inM&&taskMap[dn2])taskMap[dn2].slice(0,1).forEach(t=>{
       html+=`<div class="cev ev-task">📌 ${String(t['업무명'])}</div>`;
@@ -685,10 +739,8 @@ function renderCal(){
       html+=`<div class="cev ev-lv">🏖 ${[...lvMap[dn2]].join(' ')}</div>`;
     if(inM&&outMap[dn2]&&outMap[dn2].size)
       html+=`<div class="cev ev-out">🚗 ${[...outMap[dn2]].join(' ')}</div>`;
-    if(inM&&outMap[dn2]&&outMap[dn2].size)
-      html+=`<div class="cev ev-out">🚗 ${[...outMap[dn2]].join(' ')}</div>`;
-    if(inM&&offMap[dn2]&&offMap[dn2].length>2)
-      html+=`<div style="font-size:10px;color:var(--text3);padding:1px 4px">+${offMap[dn2].length-2}건 더</div>`;
+    if(inM&&offMap[dn2]&&offMap[dn2].length>3)
+      html+=`<div style="font-size:10px;color:var(--text3);padding:1px 4px">+${offMap[dn2].length-3}건 더</div>`;
     cell.innerHTML=html;grid.appendChild(cell);
   }
 }
