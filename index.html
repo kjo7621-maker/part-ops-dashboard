@@ -1427,10 +1427,11 @@ async function apiGet(p){
   return r.json();
 }
 async function apiPost(p){
+  const body=new URLSearchParams(p).toString();
   const r=await fetch(API,{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(p)
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body
   });
   return r.json();
 }
