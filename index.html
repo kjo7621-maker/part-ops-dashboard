@@ -318,6 +318,27 @@ tr:hover td{background:#FAFAF8}
 .alert{padding:10px 14px;border-radius:var(--r);font-size:13px;margin-bottom:12px;display:none}
 .alert.show{display:block}
 .alert.ok{background:var(--ok-bg);color:var(--ok)}.alert.err{background:var(--danger-bg);color:var(--danger)}
+
+/* ── 업체 DB / 계약 수정 ─────────────────────────── */
+.vendor-ac-wrap{position:relative}
+.vendor-ac-input{width:100%;font-size:13px;padding:8px 12px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--text);font-family:inherit;outline:none;height:38px}
+.vendor-ac-input:focus{border-color:var(--black)}
+.vendor-ac-drop{position:absolute;top:40px;left:0;right:0;background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--r);box-shadow:var(--shadow-md);z-index:200;max-height:180px;overflow-y:auto;display:none}
+.vendor-ac-drop.open{display:block}
+.vendor-ac-item{padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border)}
+.vendor-ac-item:last-child{border-bottom:none}
+.vendor-ac-item:hover{background:var(--surface2)}
+.vendor-ac-item .name{font-weight:600}
+.vendor-ac-item .sub{font-size:11px;color:var(--text3);margin-top:1px}
+.edit-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.edit-modal-bg.open{display:flex}
+.edit-modal{background:var(--surface);border-radius:var(--rxl);padding:24px;width:min(600px,94vw);max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-md);animation:up .2s ease}
+.edit-modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.edit-modal-title{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.edit-modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:22px;line-height:1}
+.edit-modal-close:hover{color:var(--text)}
+.edit-btn{background:none;border:0.5px solid var(--border2);border-radius:var(--r);padding:3px 10px;font-size:11.5px;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:4px}
+.edit-btn:hover{background:var(--surface2);color:var(--text)}
 </style>
 </head>
 <body>
@@ -350,6 +371,9 @@ tr:hover td{background:#FAFAF8}
     </button>
     <button class="nav-btn" onclick="showPage('proj-add',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>프로젝트 등록
+    </button>
+    <button class="nav-btn" onclick="showPage('vendor-db',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>업체 관리
     </button>
     <div class="nav-sec">등록</div>
     <button class="nav-btn" onclick="showPage('add-task',this)">
@@ -876,8 +900,8 @@ tr:hover td{background:#FAFAF8}
       </div>
       <div class="contract-table-wrap">
         <table>
-          <colgroup><col style="width:110px"><col style="width:90px"><col><col style="width:65px"><col style="width:60px"><col style="width:105px"><col style="width:105px"><col style="width:55px"><col style="width:70px"></colgroup>
-          <thead><tr><th>업체명</th><th>대분류</th><th>계약 내용</th><th>비용구분</th><th>지급구분</th><th style="text-align:right">계약금액</th><th style="text-align:right">선금</th><th>서류</th><th>상태</th></tr></thead>
+          <colgroup><col style="width:110px"><col style="width:90px"><col><col style="width:65px"><col style="width:60px"><col style="width:105px"><col style="width:105px"><col style="width:55px"><col style="width:70px"><col style="width:44px"></colgroup>
+          <thead><tr><th>업체명</th><th>대분류</th><th>계약 내용</th><th>비용구분</th><th>지급구분</th><th style="text-align:right">계약금액</th><th style="text-align:right">선금</th><th>서류</th><th>상태</th><th></th></tr></thead>
           <tbody id="det-contract-tbody"></tbody>
         </table>
       </div>
@@ -968,7 +992,12 @@ tr:hover td{background:#FAFAF8}
       </div>
     </div>
     <div class="frow">
-      <div class="fg"><label>업체명 / 성명</label><input id="ca-vendor" placeholder="업체명 또는 담당자 성명"></div>
+      <div class="fg"><label>업체명 / 성명</label>
+        <div class="vendor-ac-wrap">
+          <input class="vendor-ac-input" id="ca-vendor" placeholder="업체명 또는 담당자 성명 검색..." oninput="vendorAC('ca')" autocomplete="off">
+          <div class="vendor-ac-drop" id="ca-vendor-drop"></div>
+        </div>
+      </div>
       <div class="fg"><label>계약 유형</label>
         <select id="ca-type"><option>용역 계약</option><option>출연 계약</option><option>대관 계약</option><option>변경 합의</option></select>
       </div>
@@ -1018,6 +1047,125 @@ tr:hover td{background:#FAFAF8}
     <div class="btn-row">
       <button class="btn btn-sec" onclick="resetContractForm()">초기화</button>
       <button class="btn btn-primary" id="btn-contract-add" onclick="submitContractAdd()">계약 등록</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 업체 관리 -->
+<div id="page-vendor-db" class="page">
+  <div class="ph"><h2>업체 관리</h2><p>등록된 업체는 계약 등록 시 자동완성으로 불러옵니다</p></div>
+  <div class="g2">
+    <div class="card">
+      <div class="ct">업체 등록</div>
+      <div class="alert" id="msg-vendor"></div>
+      <div class="frow single">
+        <div class="fg"><label>업체명 / 성명</label><input id="v-name" placeholder="업체명 또는 담당자 성명"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>담당자명</label><input id="v-manager" placeholder="담당자 성명"></div>
+        <div class="fg"><label>연락처</label><input id="v-phone" placeholder="010-0000-0000"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>이메일</label><input id="v-email" placeholder="example@email.com"></div>
+        <div class="fg"><label>업종 / 분류</label><input id="v-category" placeholder="예: 방송기술, 무대제작"></div>
+      </div>
+      <div class="frow single" style="margin-bottom:0">
+        <div class="fg"><label>메모</label><input id="v-note" placeholder="추가 메모 (선택)"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-sec" onclick="resetVendorForm()">초기화</button>
+        <button class="btn btn-primary" id="btn-vendor" onclick="submitVendor()">업체 등록</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">등록된 업체 목록</div>
+      <div class="sr" style="margin-bottom:10px">
+        <input id="vendor-list-search" placeholder="업체명 검색..." oninput="renderVendorList()">
+      </div>
+      <div class="tw" style="border:none;box-shadow:none;border-radius:0">
+        <table>
+          <thead><tr><th>업체명</th><th>담당자</th><th>연락처</th><th>이메일</th><th>분류</th></tr></thead>
+          <tbody id="vendor-list-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 계약 수정 모달 -->
+<div class="edit-modal-bg" id="contract-edit-modal" onclick="closeEditModal(event)">
+  <div class="edit-modal">
+    <div class="edit-modal-header">
+      <div class="edit-modal-title">계약 수정</div>
+      <button class="edit-modal-close" onclick="document.getElementById('contract-edit-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="alert" id="msg-contract-edit"></div>
+    <input type="hidden" id="edit-contract-id">
+    <div class="form-section-title">계약 기본 정보</div>
+    <div class="frow three">
+      <div class="fg"><label>대분류</label>
+        <select id="edit-cat">
+          <option>인건 및 출연</option><option>방송 중계 및 기술</option>
+          <option>콘텐츠 및 영상</option><option>기획 및 사전제작</option><option>무대 및 인프라</option>
+        </select>
+      </div>
+      <div class="fg"><label>중분류</label><input id="edit-subcat"></div>
+      <div class="fg"><label>비용 구분</label>
+        <select id="edit-costtype"><option>직접비</option><option>간접비</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>업체명</label><input id="edit-vendor"></div>
+      <div class="fg"><label>계약 유형</label>
+        <select id="edit-ctype"><option>용역 계약</option><option>출연 계약</option><option>대관 계약</option><option>변경 합의</option></select>
+      </div>
+    </div>
+    <div class="frow single">
+      <div class="fg"><label>계약 내용</label><textarea id="edit-desc"></textarea></div>
+    </div>
+    <div class="form-section-title">금액 · 지급</div>
+    <div class="frow three">
+      <div class="fg"><label>계약 금액</label><input type="number" id="edit-amount"></div>
+      <div class="fg"><label>지급 구분</label>
+        <select id="edit-paytype"><option>일시지급</option><option>분할지급</option></select>
+      </div>
+      <div class="fg"><label>과세 구분</label>
+        <select id="edit-tax"><option>과세(10%)</option><option>사업소득(3.3%)</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>선금</label><input type="number" id="edit-prepay"></div>
+      <div class="fg"><label>선금 예정일</label><input type="date" id="edit-prepaydate"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>잔금</label><input type="number" id="edit-balance"></div>
+      <div class="fg"><label>잔금 예정일</label><input type="date" id="edit-baldate"></div>
+    </div>
+    <div class="form-section-title">담당자</div>
+    <div class="frow three">
+      <div class="fg"><label>담당자명</label><input id="edit-manager"></div>
+      <div class="fg"><label>연락처</label><input id="edit-phone"></div>
+      <div class="fg"><label>이메일</label><input id="edit-email"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>상태</label>
+        <select id="edit-status"><option>기안중</option><option>선금 완료</option><option>최종 완료</option></select>
+      </div>
+      <div class="fg"><label>고용보험</label>
+        <select id="edit-insurance"><option>해당없음</option><option>예술인고용보험</option><option>일반고용보험</option></select>
+      </div>
+    </div>
+    <div class="form-section-title">서류 체크</div>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:4px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-est" style="accent-color:var(--black);width:14px;height:14px"> 견적서</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-con" style="accent-color:var(--black);width:14px;height:14px"> 계약서</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-rev1" style="accent-color:var(--black);width:14px;height:14px"> 검토 요청</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-rev2" style="accent-color:var(--black);width:14px;height:14px"> 양사 검토</label>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('contract-edit-modal').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="btn-contract-edit" onclick="submitContractEdit()">수정 저장</button>
     </div>
   </div>
 </div>
@@ -1096,6 +1244,8 @@ async function loadAll(){
     if(d&&d.ok){
       tasks=d.tasks||[];leaves=d.leaves||[];officials=d.officials||[];
       initPM({projects:d.projects||[],budgetItems:d.budgetItems||[],contracts:d.contracts||[],payments:d.payments||[]});
+      initVendors(d.vendors||[]);
+      renderVendorList();
       setDot('ok','연결됨 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
       renderDash();
       filtered=tasks.filter(t=>t['업무명']&&String(t['업무명']).trim());
@@ -1836,6 +1986,7 @@ function loadDetContracts(){
       <td style="text-align:right;color:var(--info);font-variant-numeric:tabular-nums">${pre?pre.toLocaleString():'—'}</td>
       <td><span class="doc-dot ${e?'dd-ok':'dd-no'}" title="견적서">${e?'✓':'✗'}</span><span class="doc-dot ${k?'dd-ok':'dd-no'}" title="계약서">${k?'✓':'✗'}</span><span class="doc-dot ${r?'dd-ok':'dd-no'}" title="양사검토">${r?'✓':'✗'}</span></td>
       <td><span class="ct-badge ${stCls}">${st}</span></td>
+      <td><button class="edit-btn" onclick="openContractEdit('${c['ID']}')">✏️</button></td>
     </tr>`;
   }).join(''):'<tr><td colspan="9" class="empty">계약 없음</td></tr>';
 }
@@ -1998,6 +2149,170 @@ async function submitContractAdd(){
     } else showAlert('msg-contract-add','오류: '+(d?.error||''),'err');
   }catch(e){showAlert('msg-contract-add','오류: '+e.message,'err');}
   setBtn('btn-contract-add','계약 등록',false);
+}
+
+
+// ══════════════════════════════════════════════════════════
+// 업체 관리 + 계약 수정
+// ══════════════════════════════════════════════════════════
+let pmVendors = [];
+
+function initVendors(vendors){ pmVendors = vendors || []; }
+
+// ── 업체 목록 렌더 ─────────────────────────────────────────
+function renderVendorList(){
+  const q = (document.getElementById('vendor-list-search')?.value||'').toLowerCase();
+  const list = q ? pmVendors.filter(v=>String(v['업체명']||'').toLowerCase().includes(q)) : pmVendors;
+  const tbody = document.getElementById('vendor-list-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = list.length ? list.map(v=>`<tr>
+    <td style="font-weight:600">${v['업체명']||''}</td>
+    <td>${v['담당자']||''}</td>
+    <td style="font-size:12px">${v['연락처']||''}</td>
+    <td style="font-size:12px;color:var(--text2)">${v['이메일']||''}</td>
+    <td style="font-size:12px;color:var(--text2)">${v['분류']||''}</td>
+  </tr>`).join('') : '<tr><td colspan="5" class="empty">등록된 업체 없음</td></tr>';
+}
+
+// ── 업체 자동완성 ──────────────────────────────────────────
+function vendorAC(prefix){
+  const inp = document.getElementById(prefix+'-vendor');
+  const drop = document.getElementById(prefix+'-vendor-drop');
+  if(!inp||!drop) return;
+  const q = inp.value.trim().toLowerCase();
+  if(!q){ drop.classList.remove('open'); return; }
+  const hits = pmVendors.filter(v=>String(v['업체명']||'').toLowerCase().includes(q)).slice(0,8);
+  if(!hits.length){ drop.classList.remove('open'); return; }
+  drop.innerHTML = hits.map(v=>`
+    <div class="vendor-ac-item" onclick="selectVendorAC('${prefix}','${v['업체명'].replace(/'/g,"\\'")}')">
+      <div class="name">${v['업체명']}</div>
+      <div class="sub">${[v['담당자'],v['연락처']].filter(Boolean).join(' · ')}</div>
+    </div>`).join('');
+  drop.classList.add('open');
+}
+
+function selectVendorAC(prefix, name){
+  const v = pmVendors.find(v=>v['업체명']===name);
+  if(!v) return;
+  const set = (id, val) => { const el=document.getElementById(id); if(el&&val) el.value=val; };
+  set(prefix+'-vendor', v['업체명']);
+  set(prefix+'-manager', v['담당자']);
+  set(prefix+'-phone',   v['연락처']);
+  set(prefix+'-email',   v['이메일']);
+  document.getElementById(prefix+'-vendor-drop')?.classList.remove('open');
+}
+
+// 드롭다운 외부 클릭 시 닫기
+document.addEventListener('click', e=>{
+  document.querySelectorAll('.vendor-ac-drop').forEach(d=>{
+    if(!d.contains(e.target)&&e.target.id!==d.id.replace('-drop',''))
+      d.classList.remove('open');
+  });
+});
+
+// ── 업체 등록 ──────────────────────────────────────────────
+function resetVendorForm(){
+  ['v-name','v-manager','v-phone','v-email','v-category','v-note'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+}
+async function submitVendor(){
+  if(!API){ alert('먼저 API를 연결하세요'); return; }
+  const name = document.getElementById('v-name')?.value.trim();
+  if(!name){ alert('업체명을 입력하세요'); return; }
+  setBtn('btn-vendor','등록 중...',true);
+  try{
+    const d = await apiPost({action:'addVendor',
+      name, manager:document.getElementById('v-manager')?.value||'',
+      phone:document.getElementById('v-phone')?.value||'',
+      email:document.getElementById('v-email')?.value||'',
+      category:document.getElementById('v-category')?.value||'',
+      note:document.getElementById('v-note')?.value||'',
+    });
+    if(d&&d.ok){ showAlert('msg-vendor','✓ '+d.message,'ok'); resetVendorForm(); await loadAll(); }
+    else showAlert('msg-vendor','오류: '+(d?.error||''),'err');
+  }catch(e){ showAlert('msg-vendor','오류: '+e.message,'err'); }
+  setBtn('btn-vendor','업체 등록',false);
+}
+
+// ── 계약 수정 ──────────────────────────────────────────────
+function openContractEdit(contractId){
+  const c = pmContracts.find(c=>String(c['ID'])===String(contractId));
+  if(!c){ alert('계약 정보를 찾을 수 없습니다'); return; }
+  const set = (id,val)=>{ const el=document.getElementById(id); if(el) el.value=val||''; };
+  const setChk = (id,val)=>{ const el=document.getElementById(id); if(el) el.checked=(val===true||val==='TRUE'||val===1); };
+  const setOpt = (id,val)=>{ const el=document.getElementById(id); if(!el) return;
+    for(let i=0;i<el.options.length;i++) if(el.options[i].value===val||el.options[i].text===val){el.selectedIndex=i;break;} };
+  set('edit-contract-id', c['ID']);
+  set('edit-vendor',      c['업체명']);
+  set('edit-subcat',      c['중분류']);
+  set('edit-desc',        c['계약내용']);
+  set('edit-amount',      c['계약금액']);
+  set('edit-prepay',      c['선금']);
+  set('edit-prepaydate',  c['선금예정일']);
+  set('edit-balance',     c['잔금']);
+  set('edit-baldate',     c['잔금예정일']);
+  set('edit-manager',     c['담당자']);
+  set('edit-phone',       c['연락처']);
+  set('edit-email',       c['이메일']);
+  setOpt('edit-cat',       c['대분류']);
+  setOpt('edit-costtype',  c['비용구분']);
+  setOpt('edit-ctype',     c['계약유형']);
+  setOpt('edit-paytype',   c['지급구분']);
+  setOpt('edit-tax',       c['과세구분']);
+  setOpt('edit-status',    c['상태']);
+  setOpt('edit-insurance', c['고용보험']);
+  setChk('edit-est',  c['견적서']);
+  setChk('edit-con',  c['계약서']);
+  setChk('edit-rev1', c['검토요청']);
+  setChk('edit-rev2', c['양사검토']);
+  document.getElementById('contract-edit-modal').classList.add('open');
+}
+
+function closeEditModal(e){
+  if(e.target.id==='contract-edit-modal')
+    document.getElementById('contract-edit-modal').classList.remove('open');
+}
+
+async function submitContractEdit(){
+  if(!API){ alert('먼저 API를 연결하세요'); return; }
+  const id = document.getElementById('edit-contract-id')?.value;
+  if(!id){ alert('계약 ID가 없습니다'); return; }
+  setBtn('btn-contract-edit','저장 중...',true);
+  try{
+    const d = await apiPost({action:'updateContract',
+      id,
+      category:     document.getElementById('edit-cat')?.value||'',
+      subcategory:  document.getElementById('edit-subcat')?.value||'',
+      costType:     document.getElementById('edit-costtype')?.value||'',
+      vendor:       document.getElementById('edit-vendor')?.value||'',
+      contractType: document.getElementById('edit-ctype')?.value||'',
+      description:  document.getElementById('edit-desc')?.value||'',
+      amount:       document.getElementById('edit-amount')?.value||'',
+      payType:      document.getElementById('edit-paytype')?.value||'',
+      taxType:      document.getElementById('edit-tax')?.value||'',
+      prepay:       document.getElementById('edit-prepay')?.value||'',
+      prepayDate:   document.getElementById('edit-prepaydate')?.value||'',
+      balance:      document.getElementById('edit-balance')?.value||'',
+      balanceDate:  document.getElementById('edit-baldate')?.value||'',
+      manager:      document.getElementById('edit-manager')?.value||'',
+      phone:        document.getElementById('edit-phone')?.value||'',
+      email:        document.getElementById('edit-email')?.value||'',
+      status:       document.getElementById('edit-status')?.value||'',
+      insurance:    document.getElementById('edit-insurance')?.value||'',
+      hasEstimate:  String(document.getElementById('edit-est')?.checked),
+      hasContract:  String(document.getElementById('edit-con')?.checked),
+      reviewReq:    String(document.getElementById('edit-rev1')?.checked),
+      bothReview:   String(document.getElementById('edit-rev2')?.checked),
+    });
+    if(d&&d.ok){
+      showAlert('msg-contract-edit','✓ '+d.message,'ok');
+      setTimeout(()=>{ document.getElementById('contract-edit-modal').classList.remove('open'); },1200);
+      await loadAll();
+      loadDetContracts();
+    } else showAlert('msg-contract-edit','오류: '+(d?.error||''),'err');
+  }catch(e){ showAlert('msg-contract-edit','오류: '+e.message,'err'); }
+  setBtn('btn-contract-edit','수정 저장',false);
 }
 
 </script>
