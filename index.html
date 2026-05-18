@@ -2451,6 +2451,7 @@ async function submitVendor(){
 
 // ── 계약 수정 ──────────────────────────────────────────────
 function openContractEdit(contractId){
+  document.querySelectorAll('.edit-modal-bg').forEach(m=>m.classList.remove('open'));
   const c = pmContracts.find(c=>String(c['ID'])===String(contractId));
   if(!c){ alert('계약 정보를 찾을 수 없습니다'); return; }
   const set = (id,val)=>{ const el=document.getElementById(id); if(el) el.value=val||''; };
@@ -2542,6 +2543,8 @@ function formatPhone(input){
 
 // ── 업체 수정 ──────────────────────────────────────────────
 function openVendorEdit(vendorId){
+  // 모든 모달 먼저 닫기
+  document.querySelectorAll('.edit-modal-bg').forEach(m=>m.classList.remove('open'));
   const v=pmVendors.find(v=>String(v['ID'])===String(vendorId));
   if(!v){alert('업체 정보를 찾을 수 없습니다');return;}
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
@@ -2622,6 +2625,7 @@ async function confirmDelete(msg, action, params){
 
 // ── 업무 수정 ──────────────────────────────────────────────
 function openTaskEdit(taskId){
+  document.querySelectorAll('.edit-modal-bg').forEach(m=>m.classList.remove('open'));
   const t=tasks.find(t=>String(t['ID'])===String(taskId));
   if(!t){alert('업무 정보를 찾을 수 없습니다');return;}
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
@@ -2672,6 +2676,7 @@ function renderLeaveDetailWithIdx(){
 }
 
 function openLeaveEdit(listIdx){
+  document.querySelectorAll('.edit-modal-bg').forEach(m=>m.classList.remove('open'));
   const l=currentLeaveList[listIdx];
   if(!l){alert('근태 정보를 찾을 수 없습니다');return;}
   // rowIdx = 원본 leaves 배열 인덱스 + 1 (1-based, 헤더 제외)
@@ -2731,6 +2736,7 @@ function renderOfficialList(){
   </tr>`).join(''):'<tr><td colspan="5" class="empty">등록된 일정 없음</td></tr>';
 }
 function openOfficialEdit(officialId){
+  document.querySelectorAll('.edit-modal-bg').forEach(m=>m.classList.remove('open'));
   const o=officials.find(o=>String(o['ID'])===String(officialId));
   if(!o){alert('일정 정보를 찾을 수 없습니다');return;}
   document.getElementById('eo-id').value=o['ID'];
@@ -2762,6 +2768,7 @@ async function submitOfficialEdit(){
 
 // ── 프로젝트 수정/삭제 ─────────────────────────────────────
 function openProjectEdit(projId){
+  document.querySelectorAll('.edit-modal-bg').forEach(m=>m.classList.remove('open'));
   const p=pmProjects.find(p=>String(p.ID)===String(projId));
   if(!p){alert('프로젝트 정보를 찾을 수 없습니다');return;}
   const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
