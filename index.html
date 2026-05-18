@@ -667,6 +667,15 @@ tr:hover td{background:#FAFAF8}
       <button class="btn btn-primary" id="btn-sched" onclick="submitSched()">일정 등록</button>
     </div>
   </div>
+  <div class="card" style="margin-top:14px">
+    <div class="ct">등록된 일정</div>
+    <div class="tw" style="border:none;box-shadow:none;border-radius:0">
+      <table>
+        <thead><tr><th>날짜</th><th>프로젝트</th><th>내용</th><th>비고</th><th></th></tr></thead>
+        <tbody id="official-list-tbody"><tr><td colspan="5" class="empty">연결 후 불러옵니다</td></tr></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 
@@ -1128,17 +1137,6 @@ tr:hover td{background:#FAFAF8}
     <div class="btn-row">
       <button class="btn btn-sec" onclick="document.getElementById('vendor-edit-modal').classList.remove('open')">취소</button>
       <button class="btn btn-primary" id="btn-vendor-edit" onclick="submitVendorEdit()">수정 저장</button>
-    </div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <div class="ct" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <span>등록된 일정</span>
-    </div>
-    <div class="tw" style="border:none;box-shadow:none;border-radius:0">
-      <table>
-        <thead><tr><th>날짜</th><th>프로젝트</th><th>내용</th><th>비고</th><th></th></tr></thead>
-        <tbody id="official-list-tbody"><tr><td colspan="5" class="empty">연결 후 불러옵니다</td></tr></tbody>
-      </table>
     </div>
   </div>
 </div>
