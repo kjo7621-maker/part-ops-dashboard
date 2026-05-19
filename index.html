@@ -347,6 +347,34 @@ tr:hover td{background:#FAFAF8}
 .act-btn:hover{background:var(--surface2);color:var(--text)}
 .act-btn.danger{border-color:var(--danger-bg);color:var(--danger)}
 .act-btn.danger:hover{background:var(--danger-bg)}
+
+/* ── 사업성 검토 / 비용 상세 ─────────────────────────── */
+.biz-section{margin-bottom:20px}
+.biz-sec-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px;background:var(--surface2);border-radius:var(--r);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.biz-sec-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surface);color:var(--text3)}
+.biz-row{display:grid;grid-template-columns:180px 1fr 1fr 1fr 80px;gap:8px;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:12.5px}
+.biz-row.header{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding-bottom:6px}
+.biz-row input{font-size:12.5px;height:32px;padding:0 8px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--text);font-family:inherit;outline:none;text-align:right}
+.biz-row input:focus{border-color:var(--black)}
+.biz-row .label{font-weight:500;color:var(--text);font-size:12.5px}
+.biz-row .guide{font-size:10px;color:var(--text3)}
+.biz-total-row{display:grid;grid-template-columns:180px 1fr 1fr 1fr 80px;gap:8px;align-items:center;padding:8px 12px;border-radius:var(--r);font-size:13px;font-weight:700;margin-top:6px}
+.biz-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px;padding:16px;background:var(--surface2);border-radius:var(--rl)}
+.biz-sum-item .bl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.biz-sum-item .bv{font-size:17px;font-weight:700}
+.biz-sum-item .bv.pos{color:var(--ok)}.biz-sum-item .bv.neg{color:var(--danger)}
+/* 비용 상세 */
+.cost-detail-header{display:grid;grid-template-columns:110px 1fr 100px 90px 80px 100px 100px 70px 44px;gap:6px;padding:6px 0;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:0.5px solid var(--border)}
+.cost-detail-row{display:grid;grid-template-columns:110px 1fr 100px 90px 80px 100px 100px 70px 44px;gap:6px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:12.5px}
+.cost-detail-row input,.cost-detail-row select{font-size:12px;height:30px;padding:0 6px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--text);font-family:inherit;outline:none}
+.cost-detail-row .num{text-align:right;font-variant-numeric:tabular-nums}
+.cost-add-row{display:flex;align-items:center;gap:6px;padding:8px 0;font-size:12.5px;color:var(--text3);cursor:pointer}
+.cost-add-row:hover{color:var(--text)}
+.cat-badge{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+.cat-c1{background:#EFF6FF;color:#1E40AF}.cat-c2{background:#F0FDF4;color:#166534}
+.cat-c3{background:#F5F3FF;color:#5B21B6}.cat-c4{background:#FFF7ED;color:#C2410C}
+.cat-c5{background:#FEF2F2;color:#991B1B}.cat-p{background:#FFFBEB;color:#92400E}
+.cat-d{background:#F0F0EE;color:#5C5C58}.cat-m{background:#F0FDF4;color:#0F766E}
 </style>
 </head>
 <body>
@@ -867,10 +895,98 @@ tr:hover td{background:#FAFAF8}
     <div class="proj-hero" id="proj-hero"></div>
 
     <div class="pm-tabs">
-      <button class="pm-tab on" onclick="switchProjTab('budget',this)">기안 예산표</button>
+      <button class="pm-tab on" onclick="switchProjTab('biz',this)">사업성 검토</button>
+      <button class="pm-tab" onclick="switchProjTab('costdetail',this)">비용 상세</button>
+      <button class="pm-tab" onclick="switchProjTab('budget',this)">기안 예산표</button>
       <button class="pm-tab" onclick="switchProjTab('contracts',this)">계약 관리</button>
       <button class="pm-tab" onclick="switchProjTab('payments',this)">지급 현황</button>
       <button class="pm-tab" onclick="switchProjTab('overview',this)">손익 요약</button>
+    </div>
+
+
+    <!-- 사업성 검토 탭 -->
+    <div id="pdt-biz" style="display:none">
+      <div class="card">
+        <div class="alert" id="msg-biz"></div>
+        <!-- 매출 -->
+        <div class="biz-section">
+          <div class="biz-sec-title">A. 매출 (Revenue)</div>
+          <div class="biz-row header">
+            <span>항목</span><span style="text-align:right">예상 금액 (원)</span><span style="text-align:right">실행 금액 (원)</span><span style="text-align:right">차이</span><span></span>
+          </div>
+          <div class="biz-row">
+            <span class="label">총 예상 매출 (A)</span>
+            <input type="number" id="biz-a-planned" placeholder="0" oninput="calcBiz()">
+            <input type="number" id="biz-a-actual" placeholder="0" oninput="calcBiz()">
+            <span id="biz-a-diff" style="text-align:right;font-variant-numeric:tabular-nums;color:var(--text3)">—</span>
+            <span></span>
+          </div>
+        </div>
+        <!-- 직접비 C -->
+        <div class="biz-section">
+          <div class="biz-sec-title">C. 핵심 제작 직접비 (Core Direct Cost)<span class="biz-sec-badge" id="biz-c-pct">—</span></div>
+          <div class="biz-row header"><span>구분</span><span style="text-align:right">예상 예산</span><span style="text-align:right">실행 예산</span><span style="text-align:right">차이</span><span>권고비율</span></div>
+          ${['C1','C2','C3','C4','C5'].map((c,i)=>{
+            const labels=['C1. 기술제작 및 인프라','C2. 출연진 및 MC','C3. 크리에이티브 및 IP','C4. 세트 및 시설','C5. 운영 및 지원'];
+            const guides=['35~45%','15~25%','15~25%','15~25%','10~15%'];
+          })}
+          <div class="biz-row"><span class="label">C1. 기술제작 및 인프라</span><input type="number" id="biz-c1-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-c1-actual" placeholder="0" oninput="calcBiz()"><span id="biz-c1-diff" class="num" style="color:var(--text3)">—</span><span class="guide">35~45%</span></div>
+          <div class="biz-row"><span class="label">C2. 출연진 및 MC</span><input type="number" id="biz-c2-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-c2-actual" placeholder="0" oninput="calcBiz()"><span id="biz-c2-diff" class="num" style="color:var(--text3)">—</span><span class="guide">15~25%</span></div>
+          <div class="biz-row"><span class="label">C3. 크리에이티브 및 IP</span><input type="number" id="biz-c3-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-c3-actual" placeholder="0" oninput="calcBiz()"><span id="biz-c3-diff" class="num" style="color:var(--text3)">—</span><span class="guide">15~25%</span></div>
+          <div class="biz-row"><span class="label">C4. 세트 및 시설</span><input type="number" id="biz-c4-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-c4-actual" placeholder="0" oninput="calcBiz()"><span id="biz-c4-diff" class="num" style="color:var(--text3)">—</span><span class="guide">15~25%</span></div>
+          <div class="biz-row"><span class="label">C5. 운영 및 지원</span><input type="number" id="biz-c5-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-c5-actual" placeholder="0" oninput="calcBiz()"><span id="biz-c5-diff" class="num" style="color:var(--text3)">—</span><span class="guide">10~15%</span></div>
+          <div class="biz-total-row" style="background:var(--danger-bg)">
+            <span style="color:var(--danger)">C 합계</span>
+            <span id="biz-c-planned-total" style="text-align:right;font-variant-numeric:tabular-nums;color:var(--danger)">0</span>
+            <span id="biz-c-actual-total" style="text-align:right;font-variant-numeric:tabular-nums;color:var(--danger)">0</span>
+            <span id="biz-c-diff-total" style="text-align:right;font-variant-numeric:tabular-nums;color:var(--text3)">—</span>
+            <span></span>
+          </div>
+        </div>
+        <!-- 상금 P -->
+        <div class="biz-section">
+          <div class="biz-sec-title">P. 상금 및 파이널 보상 (Prize Pool)</div>
+          <div class="biz-row"><span class="label">P1. 총 상금</span><input type="number" id="biz-p1-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-p1-actual" placeholder="0" oninput="calcBiz()"><span id="biz-p1-diff" class="num" style="color:var(--text3)">—</span><span></span></div>
+          <div class="biz-row"><span class="label">P2. 특별 시상</span><input type="number" id="biz-p2-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-p2-actual" placeholder="0" oninput="calcBiz()"><span id="biz-p2-diff" class="num" style="color:var(--text3)">—</span><span></span></div>
+        </div>
+        <!-- 간접비 D -->
+        <div class="biz-section">
+          <div class="biz-sec-title">D. 간접비 (Indirect Cost)</div>
+          <div class="biz-row"><span class="label">D1. 내부 인건비</span><input type="number" id="biz-d1-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-d1-actual" placeholder="0" oninput="calcBiz()"><span id="biz-d1-diff" class="num" style="color:var(--text3)">—</span><span></span></div>
+          <div class="biz-row"><span class="label">D2. 시설 및 스튜디오</span><input type="number" id="biz-d2-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-d2-actual" placeholder="0" oninput="calcBiz()"><span id="biz-d2-diff" class="num" style="color:var(--text3)">—</span><span></span></div>
+          <div class="biz-row"><span class="label">D3. 기타 간접비</span><input type="number" id="biz-d3-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-d3-actual" placeholder="0" oninput="calcBiz()"><span id="biz-d3-diff" class="num" style="color:var(--text3)">—</span><span></span></div>
+        </div>
+        <!-- 마케팅 M -->
+        <div class="biz-section">
+          <div class="biz-sec-title">M. 마케팅 (Marketing)</div>
+          <div class="biz-row"><span class="label">M1. 마케팅/홍보</span><input type="number" id="biz-m1-planned" placeholder="0" oninput="calcBiz()"><input type="number" id="biz-m1-actual" placeholder="0" oninput="calcBiz()"><span id="biz-m1-diff" class="num" style="color:var(--text3)">—</span><span></span></div>
+        </div>
+        <!-- 손익 요약 -->
+        <div class="biz-summary" id="biz-summary-area"></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:14px">
+          <button class="btn btn-primary" id="btn-biz-save" onclick="saveBizReviewData()">Sheets에 저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 비용 상세 탭 -->
+    <div id="pdt-costdetail" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:12px;color:var(--text2)">항목 추가 후 저장하세요</div>
+        <button class="btn btn-primary" style="height:32px;font-size:12px" onclick="addCostDetailRow()">+ 항목 추가</button>
+      </div>
+      <div class="alert" id="msg-costdetail"></div>
+      <div class="card" style="padding:14px">
+        <div class="cost-detail-header">
+          <span>카테고리</span><span>항목명</span><span>업체명</span><span style="text-align:right">단가(원)</span><span style="text-align:right">횟수</span><span style="text-align:right">예상합계</span><span style="text-align:right">실행합계</span><span>비고</span><span></span>
+        </div>
+        <div id="cost-detail-body"></div>
+        <div class="cost-add-row" onclick="addCostDetailRow()">+ 항목 추가</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)">
+          <div style="font-size:12.5px;color:var(--text2)">예상 합계 <strong id="cd-planned-total" style="color:var(--text);margin-left:6px">0원</strong> &nbsp;·&nbsp; 실행 합계 <strong id="cd-actual-total" style="color:var(--ok);margin-left:6px">0원</strong></div>
+          <button class="btn btn-primary" id="btn-cd-save" onclick="saveCostDetails()">Sheets에 저장</button>
+        </div>
+      </div>
     </div>
 
     <!-- 예산표 탭 -->
@@ -1453,7 +1569,7 @@ async function loadAll(){
     const d=await apiGet({action:'getAll'});
     if(d&&d.ok){
       tasks=d.tasks||[];leaves=d.leaves||[];officials=d.officials||[];
-      initPM({projects:d.projects||[],budgetItems:d.budgetItems||[],contracts:d.contracts||[],payments:d.payments||[]});
+      initPM({projects:d.projects||[],budgetItems:d.budgetItems||[],contracts:d.contracts||[],payments:d.payments||[],bizReviews:d.bizReviews||[],costDetails:d.costDetails||[]});
       initVendors(d.vendors||[]);
       renderVendorList();
       setDot('ok','연결됨 · '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
@@ -2126,6 +2242,7 @@ let addContractProjId=null;
 
 // ── 데이터 초기화 ──────────────────────────────────────────
 function initPM(data){
+  initPMExtra(data);
   pmProjects = data.projects     || [];
   pmBudget   = data.budgetItems  || [];
   pmContracts= data.contracts    || [];
@@ -2260,7 +2377,7 @@ function showProjDetail(id){
       <div class="ph-stat"><div class="sv" style="color:${bud.rateDir>=0?'#4ade80':'#f87171'}">${bud.rateDir?bud.rateDir+'%':'—'}</div><div class="sl">수익률</div></div>
       <div class="ph-stat"><div class="sv">${getProjContracts(id).length}건</div><div class="sl">계약</div></div>
     </div>`;
-  switchProjTab('budget', document.querySelector('.pm-tab'));
+  switchProjTab('biz', document.querySelector('.pm-tab'));
 }
 
 function showProjList(){
@@ -2270,13 +2387,15 @@ function showProjList(){
 }
 
 function switchProjTab(tab, el){
-  ['pdt-budget','pdt-contracts','pdt-payments','pdt-overview'].forEach(id=>{
+  ['pdt-biz','pdt-costdetail','pdt-budget','pdt-contracts','pdt-payments','pdt-overview'].forEach(id=>{
     document.getElementById(id).style.display='none';
   });
   document.querySelectorAll('.pm-tab').forEach(b=>b.classList.remove('on'));
   document.getElementById('pdt-'+tab).style.display='block';
   currentProjTab=tab;
   if(el) el.classList.add('on');
+  if(tab==='biz')        loadBizReview();
+  if(tab==='costdetail') loadCostDetail();
   if(tab==='budget')    loadDetBudget();
   if(tab==='contracts') loadDetContracts();
   if(tab==='payments')  loadDetPayments();
@@ -3016,6 +3135,231 @@ function deleteContractRow(contractId){
   const c=pmContracts.find(c=>String(c['ID'])===String(contractId));
   const nm=c?c['업체명']:'계약';
   confirmDelete('"'+nm+'" 계약을 삭제하시겠습니까?','deleteContract',{id:contractId});
+}
+
+
+// ══════════════════════════════════════════════════════════
+// 사업성 검토 & 비용 상세
+// ══════════════════════════════════════════════════════════
+let pmBizReviews=[], pmCostDetails=[], cdRows=[];
+
+function initPMExtra(data){
+  pmBizReviews  = data.bizReviews  || [];
+  pmCostDetails = data.costDetails || [];
+}
+
+// BIZ 코드 목록
+const BIZ_CODES = [
+  {code:'A',  cat:'A',  label:'총 예상 매출 (A)'},
+  {code:'C1', cat:'C',  label:'C1. 기술제작 및 인프라'},
+  {code:'C2', cat:'C',  label:'C2. 출연진 및 MC'},
+  {code:'C3', cat:'C',  label:'C3. 크리에이티브 및 IP'},
+  {code:'C4', cat:'C',  label:'C4. 세트 및 시설'},
+  {code:'C5', cat:'C',  label:'C5. 운영 및 지원'},
+  {code:'P1', cat:'P',  label:'P1. 총 상금'},
+  {code:'P2', cat:'P',  label:'P2. 특별 시상'},
+  {code:'D1', cat:'D',  label:'D1. 내부 인건비'},
+  {code:'D2', cat:'D',  label:'D2. 시설 및 스튜디오'},
+  {code:'D3', cat:'D',  label:'D3. 기타 간접비'},
+  {code:'M1', cat:'M',  label:'M1. 마케팅/홍보'},
+];
+
+function loadBizReview(){
+  const id=String(selProjId);
+  const data=pmBizReviews.filter(r=>String(r['프로젝트ID'])===id);
+  // 기존 저장값 폼에 채우기
+  data.forEach(r=>{
+    const code=r['항목코드'];
+    const pEl=document.getElementById('biz-'+code.toLowerCase()+'-planned');
+    const aEl=document.getElementById('biz-'+code.toLowerCase()+'-actual');
+    if(pEl) pEl.value=r['예상금액']||'';
+    if(aEl) aEl.value=r['실행금액']||'';
+  });
+  calcBiz();
+}
+
+function gv(id){ return parseFloat(document.getElementById(id)?.value)||0; }
+function fmtW(n){ return n.toLocaleString()+'원'; }
+function diffColor(n){ return n>=0?'var(--ok)':'var(--danger)'; }
+
+function calcBiz(){
+  const a   = gv('biz-a-planned');
+  const aAct= gv('biz-a-actual');
+  const codes=['c1','c2','c3','c4','c5'];
+  let cP=0,cA=0;
+  codes.forEach(c=>{
+    const p=gv('biz-'+c+'-planned'), a2=gv('biz-'+c+'-actual');
+    cP+=p; cA+=a2;
+    const diff=p-a2;
+    const el=document.getElementById('biz-'+c+'-diff');
+    if(el){ el.textContent=diff?fmtW(diff):'—'; el.style.color=diffColor(diff); }
+  });
+  document.getElementById('biz-c-planned-total').textContent=fmtW(cP);
+  document.getElementById('biz-c-actual-total').textContent=fmtW(cA);
+  const cdiff=cP-cA;
+  const cdEl=document.getElementById('biz-c-diff-total');
+  if(cdEl){ cdEl.textContent=fmtW(cdiff); cdEl.style.color=diffColor(cdiff); }
+
+  // C 비율 표시
+  const pctEl=document.getElementById('biz-c-pct');
+  if(pctEl&&a) pctEl.textContent='매출의 '+Math.round(cP/a*100)+'%';
+
+  // A diff
+  const aDiff=a-aAct;
+  const aDEl=document.getElementById('biz-a-diff');
+  if(aDEl){ aDEl.textContent=aDiff?fmtW(aDiff):'—'; aDEl.style.color=diffColor(aDiff); }
+
+  // P, D, M diff
+  [['p1','P1'],['p2','P2'],['d1','D1'],['d2','D2'],['d3','D3'],['m1','M1']].forEach(([k,K])=>{
+    const p=gv('biz-'+k+'-planned'), a2=gv('biz-'+k+'-actual'), diff=p-a2;
+    const el=document.getElementById('biz-'+k+'-diff');
+    if(el){ el.textContent=diff?fmtW(diff):'—'; el.style.color=diffColor(diff); }
+  });
+
+  // 손익 요약
+  const pP=gv('biz-p1-planned')+gv('biz-p2-planned');
+  const dP=gv('biz-d1-planned')+gv('biz-d2-planned')+gv('biz-d3-planned');
+  const mP=gv('biz-m1-planned');
+  const totalCostP=cP+pP+dP+mP;
+  const profitDirP=a-cP; // 직접비(C) 기준
+  const profitTotP=a-totalCostP; // 전체 기준
+  const rateDirP=a?Math.round(profitDirP/a*100):0;
+  const rateTotP=a?Math.round(profitTotP/a*100):0;
+
+  const pA=gv('biz-p1-actual')+gv('biz-p2-actual');
+  const dA=gv('biz-d1-actual')+gv('biz-d2-actual')+gv('biz-d3-actual');
+  const mA=gv('biz-m1-actual');
+  const totalCostA=cA+pA+dA+mA;
+  const profitDirA=aAct-cA;
+  const profitTotA=aAct-totalCostA;
+  const rateDirA=aAct?Math.round(profitDirA/aAct*100):0;
+
+  const sumEl=document.getElementById('biz-summary-area');
+  if(sumEl) sumEl.innerHTML=`
+    <div class="biz-sum-item"><div class="bl">총 매출</div><div class="bv">${a?(a/100000000).toFixed(2)+'억':'—'}</div></div>
+    <div class="biz-sum-item"><div class="bl">직접비(C) 합계</div><div class="bv">${cP?(cP/100000000).toFixed(2)+'억':'—'}</div></div>
+    <div class="biz-sum-item"><div class="bl">수익 (직접비 기준)</div><div class="bv ${profitDirP>=0?'pos':'neg'}">${a?fmtW(profitDirP):'—'}</div></div>
+    <div class="biz-sum-item"><div class="bl">수익률 (직접비)</div><div class="bv ${rateDirP>=0?'pos':'neg'}">${a?rateDirP+'%':'—'}</div></div>
+    <div class="biz-sum-item"><div class="bl">수익률 (전체비용)</div><div class="bv ${rateTotP>=0?'pos':'neg'}">${a?rateTotP+'%':'—'}</div></div>`;
+}
+
+async function saveBizReviewData(){
+  if(!API){alert('먼저 API를 연결하세요');return;}
+  if(!selProjId){alert('프로젝트를 선택하세요');return;}
+  setBtn('btn-biz-save','저장 중...',true);
+  try{
+    const rows=BIZ_CODES.map(({code,cat,label})=>({
+      projId:selProjId, code, category:cat, itemName:label,
+      planned:gv('biz-'+code.toLowerCase()+'-planned'),
+      actual:gv('biz-'+code.toLowerCase()+'-actual'),
+    }));
+    let ok=0;
+    for(const r of rows){
+      const d=await apiPost({action:'saveBizReview',...r});
+      if(d&&d.ok) ok++;
+    }
+    showAlert('msg-biz',`✓ ${ok}개 항목 저장 완료`,'ok');
+    await loadAll();
+  }catch(e){showAlert('msg-biz','오류: '+e.message,'err');}
+  setBtn('btn-biz-save','Sheets에 저장',false);
+}
+
+// ── 비용 상세 ──────────────────────────────────────────────
+const CAT_OPTIONS = [
+  {value:'C1',label:'C1. 기술제작'},
+  {value:'C2',label:'C2. 출연진'},
+  {value:'C3',label:'C3. 크리에이티브'},
+  {value:'C4',label:'C4. 세트/시설'},
+  {value:'C5',label:'C5. 운영/지원'},
+  {value:'P', label:'P. 상금'},
+  {value:'D', label:'D. 간접비'},
+  {value:'M', label:'M. 마케팅'},
+];
+const catCls={C1:'cat-c1',C2:'cat-c2',C3:'cat-c3',C4:'cat-c4',C5:'cat-c5',P:'cat-p',D:'cat-d',M:'cat-m'};
+
+function loadCostDetail(){
+  const id=String(selProjId);
+  cdRows=pmCostDetails.filter(r=>String(r['프로젝트ID'])===id).map(r=>({
+    id:r['ID']||'', cat:r['카테고리']||'C1', itemName:r['항목명']||'',
+    vendor:r['업체명']||'', unitPrice:r['단가']||0, qty:r['횟수']||0,
+    actual:r['실행합계']||0, note:r['비고']||'', saved:true
+  }));
+  if(!cdRows.length) cdRows=[newCdRow()];
+  renderCostDetail();
+}
+
+function newCdRow(){ return {id:'',cat:'C1',itemName:'',vendor:'',unitPrice:0,qty:0,actual:0,note:'',saved:false}; }
+
+function addCostDetailRow(){
+  cdRows.push(newCdRow());
+  renderCostDetail();
+}
+
+function delCdRow(idx){
+  cdRows.splice(idx,1);
+  if(!cdRows.length) cdRows=[newCdRow()];
+  renderCostDetail();
+}
+
+function renderCostDetail(){
+  const body=document.getElementById('cost-detail-body');
+  if(!body) return;
+  const catOpts=CAT_OPTIONS.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
+  body.innerHTML=cdRows.map((r,i)=>{
+    const planned=(parseFloat(r.unitPrice)||0)*(parseFloat(r.qty)||0);
+    return `<div class="cost-detail-row" id="cdr-${i}">
+      <select onchange="cdRows[${i}].cat=this.value;renderCostDetail()" style="font-size:11px">${CAT_OPTIONS.map(o=>`<option value="${o.value}" ${r.cat===o.value?'selected':''}>${o.label}</option>`).join('')}</select>
+      <input placeholder="항목명" value="${r.itemName||''}" oninput="cdRows[${i}].itemName=this.value">
+      <input placeholder="업체명" value="${r.vendor||''}" oninput="cdRows[${i}].vendor=this.value">
+      <input type="number" placeholder="0" value="${r.unitPrice||''}" oninput="cdRows[${i}].unitPrice=this.value;updateCdRow(${i})" style="text-align:right">
+      <input type="number" placeholder="0" value="${r.qty||''}" oninput="cdRows[${i}].qty=this.value;updateCdRow(${i})" style="text-align:right">
+      <span class="num" id="cd-planned-${i}">${planned?planned.toLocaleString():''}</span>
+      <input type="number" placeholder="실행" value="${r.actual||''}" oninput="cdRows[${i}].actual=this.value;updateCdTotals()" style="text-align:right">
+      <input placeholder="비고" value="${r.note||''}" oninput="cdRows[${i}].note=this.value">
+      <button class="act-btn danger" onclick="delCdRow(${i})">✕</button>
+    </div>`;
+  }).join('');
+  updateCdTotals();
+}
+
+function updateCdRow(i){
+  const r=cdRows[i];
+  const planned=(parseFloat(r.unitPrice)||0)*(parseFloat(r.qty)||0);
+  const el=document.getElementById('cd-planned-'+i);
+  if(el) el.textContent=planned?planned.toLocaleString():'';
+  updateCdTotals();
+}
+
+function updateCdTotals(){
+  const totalP=cdRows.reduce((a,r)=>(parseFloat(r.unitPrice)||0)*(parseFloat(r.qty)||0)+a,0);
+  const totalA=cdRows.reduce((a,r)=>a+(parseFloat(r.actual)||0),0);
+  const pEl=document.getElementById('cd-planned-total');
+  const aEl=document.getElementById('cd-actual-total');
+  if(pEl) pEl.textContent=totalP.toLocaleString()+'원';
+  if(aEl) aEl.textContent=totalA.toLocaleString()+'원';
+}
+
+async function saveCostDetails(){
+  if(!API){alert('먼저 API를 연결하세요');return;}
+  if(!selProjId){alert('프로젝트를 선택하세요');return;}
+  setBtn('btn-cd-save','저장 중...',true);
+  try{
+    let ok=0;
+    for(const r of cdRows){
+      if(!r.itemName) continue;
+      const params={projId:selProjId,category:r.cat,itemName:r.itemName,vendor:r.vendor,unitPrice:r.unitPrice,qty:r.qty,actual:r.actual,note:r.note};
+      let d;
+      if(r.id && r.saved){
+        d=await apiPost({action:'updateCostDetail',id:r.id,...params});
+      } else {
+        d=await apiPost({action:'addCostDetail',...params});
+      }
+      if(d&&d.ok) ok++;
+    }
+    showAlert('msg-costdetail',`✓ ${ok}개 항목 저장 완료`,'ok');
+    await loadAll();
+  }catch(e){showAlert('msg-costdetail','오류: '+e.message,'err');}
+  setBtn('btn-cd-save','Sheets에 저장',false);
 }
 
 </script>
