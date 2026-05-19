@@ -71,8 +71,8 @@ body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--text);
 .kpi .sub{font-size:11px;color:var(--text3);margin-top:5px}
 .tw{overflow-x:auto;border-radius:var(--rl);border:1px solid var(--border);box-shadow:var(--shadow)}
 table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--surface)}
-th{text-align:left;padding:10px 14px;font-size:10px;font-weight:700;color:var(--text3);background:var(--surface2);border-bottom:1px solid var(--border);white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
-td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+th{text-align:left;padding:7px 14px;font-size:10px;font-weight:700;color:var(--text3);background:var(--surface2);border-bottom:1px solid var(--border);white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
+td{padding:7px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#FAFAF8}
 .clip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:0}
@@ -383,7 +383,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.11.0 · 2026-05-19</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.12.0 · 2026-05-19</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -694,15 +694,6 @@ tr:hover td{background:#FAFAF8}
     <div class="btn-row">
       <button class="btn btn-sec" onclick="resetForm('sched')">초기화</button>
       <button class="btn btn-primary" id="btn-sched" onclick="submitSched()">일정 등록</button>
-    </div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <div class="ct">등록된 일정</div>
-    <div class="tw" style="border:none;box-shadow:none;border-radius:0">
-      <table>
-        <thead><tr><th>날짜</th><th>프로젝트</th><th>내용</th><th>비고</th><th></th></tr></thead>
-        <tbody id="official-list-tbody"><tr><td colspan="5" class="empty">연결 후 불러옵니다</td></tr></tbody>
-      </table>
     </div>
   </div>
 </div>
