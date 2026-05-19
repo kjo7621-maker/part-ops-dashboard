@@ -408,7 +408,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v3.1.0 · 2026-05-19</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v3.3.0 · 2026-05-19</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -1349,7 +1349,10 @@ tr:hover td{background:#FAFAF8}
   <div class="card" style="margin-top:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div class="ct" style="margin-bottom:0">프로젝트 목록</div>
-      <span style="font-size:12px;color:var(--text2)"><span id="sales-count">0</span>건</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;color:var(--text2)"><span id="sales-count">0</span>건</span>
+        <button class="btn btn-primary" style="height:30px;font-size:12px;padding:0 12px" onclick="openSalesAdd()">+ 추가</button>
+      </div>
     </div>
     <div class="sr" style="margin-bottom:10px">
       <input id="sf-search" placeholder="프로그램명 / 광고주 검색..." oninput="renderSalesList()">
@@ -1364,8 +1367,8 @@ tr:hover td{background:#FAFAF8}
     </div>
     <div class="tw">
       <table>
-        <colgroup><col style="width:120px"><col style="width:90px"><col style="width:80px"><col style="width:70px"><col><col style="width:55px"><col style="width:90px"><col style="width:90px"><col style="width:72px"><col style="width:72px"><col style="width:60px"></colgroup>
-        <thead><tr><th>유형</th><th>팀</th><th>광고주</th><th>담당자</th><th>프로그램명</th><th>연도</th><th style="text-align:right">매출</th><th style="text-align:right">직접비</th><th style="text-align:right">수익률(직접)</th><th style="text-align:right">수익률(간접)</th><th>상태</th></tr></thead>
+        <colgroup><col style="width:110px"><col style="width:80px"><col style="width:75px"><col style="width:60px"><col><col style="width:45px"><col style="width:95px"><col style="width:95px"><col style="width:95px"><col style="width:95px"><col style="width:95px"><col style="width:70px"><col style="width:70px"><col style="width:55px"></colgroup>
+        <thead><tr><th>유형</th><th>팀</th><th>광고주</th><th>담당자</th><th>프로그램명</th><th>연도</th><th style="text-align:right">매출</th><th style="text-align:right">직접비</th><th style="text-align:right">간접비포함</th><th style="text-align:right">수익(직접)</th><th style="text-align:right">수익(간접)</th><th style="text-align:right">수익률(직접)</th><th style="text-align:right">수익률(간접)</th><th>상태</th><th></th></tr></thead>
         <tbody id="sales-list-tbody"><tr><td colspan="12" class="empty">연결 후 불러옵니다</td></tr></tbody>
       </table>
     </div>
@@ -1462,6 +1465,84 @@ tr:hover td{background:#FAFAF8}
     </div>
   </div>
 
+
+
+<!-- 매출 수정 모달 -->
+<div class="edit-modal-bg" id="sales-edit-modal" onclick="if(event.target.id==='sales-edit-modal')this.classList.remove('open')">
+  <div class="edit-modal" style="max-width:680px">
+    <div class="edit-modal-header">
+      <div class="edit-modal-title">매출 수정</div>
+      <button class="edit-modal-close" onclick="document.getElementById('sales-edit-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="alert" id="msg-sales-edit"></div>
+    <input type="hidden" id="se-key-program">
+    <input type="hidden" id="se-key-year">
+    <div class="frow three">
+      <div class="fg"><label>연도</label><select id="se-year"><option>2026</option><option>2025</option><option>2027</option></select></div>
+      <div class="fg"><label>팀</label><select id="se-team"><option>게임콘텐츠사업팀</option><option>게임사파트너사업팀</option><option>스폰서쉽_콘텐츠</option></select></div>
+      <div class="fg"><label>유형</label>
+        <select id="se-type">
+          <option value="">미분류</option>
+          <option>e스포츠</option><option>프로모션 방송</option><option>콘텐츠 제작</option>
+          <option>오프라인 행사</option><option>스폰서십</option><option>티켓 수익</option>
+          <option>커머스</option><option>기타</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow three">
+      <div class="fg"><label>계정분류</label><select id="se-category"><option>프로모션</option><option>스폰서쉽_콘텐츠</option><option>CPM (기여매출)</option><option>기타</option></select></div>
+      <div class="fg"><label>광고주 세부명</label><input id="se-clientdetail" placeholder="예: FC 온라인"></div>
+      <div class="fg"><label>광고주 분류</label><input id="se-clientgroup" placeholder="예: 넥슨"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>프로그램명</label><input id="se-program"></div>
+      <div class="fg"><label>담당자</label>
+        <select id="se-manager">
+          <option value="">선택</option>
+          <option>글로리장</option><option>윈드림</option><option>우기</option><option>토모</option><option>J.M</option><option>모찌</option><option>베컴</option><option>셀린</option><option>아놀드</option><option>져니</option><option>커비</option><option>레이시</option><option>벅자</option><option>수이</option><option>Denzi</option>
+          <option>무파사</option><option>알렌</option><option>연주</option><option>카푸</option><option>크리스토퍼</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>진행사항</label><select id="se-status"><option>진행중</option><option>완료</option><option>제안중</option></select></div>
+      <div class="fg"><label>인식 기간 (개월)</label><input type="number" id="se-period" min="1" max="12"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>취급고 (원)</label><input type="number" id="se-handling" oninput="calcSalesEditProfit()"></div>
+      <div class="fg"><label>매출 (원)</label><input type="number" id="se-revenue" oninput="calcSalesEditProfit()"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>직접비 (원)</label><input type="number" id="se-direct" oninput="calcSalesEditProfit()"></div>
+      <div class="fg"><label>간접비 포함 합계 (원)</label><input type="number" id="se-indirect" oninput="calcSalesEditProfit()"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--r);margin-bottom:10px">
+      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익(직접)</div><div style="font-size:14px;font-weight:700" id="se-profit-dir">—</div></div>
+      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익(간접포함)</div><div style="font-size:14px;font-weight:700" id="se-profit-ind">—</div></div>
+      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익률(직접)</div><div style="font-size:14px;font-weight:700" id="se-rate-dir">—</div></div>
+      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익률(간접)</div><div style="font-size:14px;font-weight:700" id="se-rate-ind">—</div></div>
+    </div>
+    <div class="form-section-title">월별 매출 인식</div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px">
+      <div class="fg"><label>1월</label><input type="number" id="se-m1"></div>
+      <div class="fg"><label>2월</label><input type="number" id="se-m2"></div>
+      <div class="fg"><label>3월</label><input type="number" id="se-m3"></div>
+      <div class="fg"><label>4월</label><input type="number" id="se-m4"></div>
+      <div class="fg"><label>5월</label><input type="number" id="se-m5"></div>
+      <div class="fg"><label>6월</label><input type="number" id="se-m6"></div>
+      <div class="fg"><label>7월</label><input type="number" id="se-m7"></div>
+      <div class="fg"><label>8월</label><input type="number" id="se-m8"></div>
+      <div class="fg"><label>9월</label><input type="number" id="se-m9"></div>
+      <div class="fg"><label>10월</label><input type="number" id="se-m10"></div>
+      <div class="fg"><label>11월</label><input type="number" id="se-m11"></div>
+      <div class="fg"><label>12월</label><input type="number" id="se-m12"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('sales-edit-modal').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="btn-sales-edit" onclick="submitSalesEdit()">수정 저장</button>
+    </div>
+  </div>
+</div>
 
 </main>
 
@@ -3582,25 +3663,23 @@ function renderSalesList(){
     const typCls = TYPE_CSS[d.salesType||''] || 'st-other';
     const id = d._id || '';
     return `<tr>
-      <td>
-        <select onchange="setSalesType(${JSON.stringify(d.programName)},${d.year},this.value)" style="font-size:11px;height:26px;padding:0 4px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--text);font-family:inherit;max-width:110px">
-          <option value="">미분류</option>
-          ${['e스포츠','프로모션 방송','콘텐츠 제작','오프라인 행사','스폰서십','티켓 수익','커머스','기타'].map(t=>`<option value="${t}" ${d.salesType===t?'selected':''}>${t}</option>`).join('')}
-        </select>
-      </td>
+      <td>${d.salesType?`<span class='sales-type-badge ${typCls}'>${d.salesType}</span>`:'<span style="font-size:11px;color:var(--text3)">미분류</span>'}</td>
       <td style="font-size:11.5px">${d.team||''}</td>
       <td style="font-size:11.5px">${d.clientGroup||''}</td>
       <td>${d.manager||''}</td>
       <td style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:0">${d.programName||''}</td>
       <td style="font-size:11px;color:var(--text3)">${d.year}</td>
-      <td style="text-align:right;font-size:12px;font-variant-numeric:tabular-nums">${d.revenue?(d.revenue/100000000).toFixed(2)+'억':'—'}</td>
-      <td style="text-align:right;font-size:12px;font-variant-numeric:tabular-nums">${d.directCost?(d.directCost/100000000).toFixed(2)+'억':'—'}</td>
+      <td style="text-align:right;font-size:12px;font-variant-numeric:tabular-nums">${d.revenue?d.revenue.toLocaleString():'—'}</td>
+      <td style="text-align:right;font-size:12px;font-variant-numeric:tabular-nums">${d.directCost?d.directCost.toLocaleString():'—'}</td>
+      <td style="text-align:right;font-size:12px;font-variant-numeric:tabular-nums">${d.indirectTotal?d.indirectTotal.toLocaleString():'—'}</td>
+      <td style="text-align:right;font-size:12px;font-variant-numeric:tabular-nums;color:${(d.revenue-d.directCost)>=0?'var(--ok)':'var(--danger)'}">${d.revenue?(d.revenue-d.directCost).toLocaleString():'—'}</td>
+      <td style="text-align:right;font-size:12px;font-variant-numeric:tabular-nums;color:${(d.revenue-d.indirectTotal)>=0?'var(--ok)':'var(--danger)'}">${d.revenue?(d.revenue-d.indirectTotal).toLocaleString():'—'}</td>
       <td style="text-align:right;font-size:12px;color:${rDir>=25?'var(--ok)':rDir>=15?'var(--text2)':'var(--danger)'}">${d.revenue?rDir+'%':'—'}</td>
       <td style="text-align:right;font-size:12px;color:${rInd>=0?'var(--text2)':'var(--danger)'}">${d.revenue?rInd+'%':'—'}</td>
       <td><span class="badge ${stCls}">${d.status||''}</span></td>
 
     </tr>`;
-  }).join('') : '<tr><td colspan="11" class="empty">데이터 없음</td></tr>';
+  }).join('') : '<tr><td colspan="14" class="empty">데이터 없음</td></tr>';
 }
 
 // 유형 빠른 설정
@@ -3747,6 +3826,114 @@ function showMemberManager(){
   if(activeMembers.includes(trimmed)){ alert('이미 있는 인원입니다'); return; }
   activeMembers.push(trimmed);
   renderMemberChips();
+}
+
+
+// ── 매출 수정/삭제/추가 ────────────────────────────────────
+function openSalesAdd(){
+  showPage('sales-add', document.querySelector('.nav-btn[onclick*="sales-add"]'));
+}
+
+function openSalesEdit(programName, year){
+  document.querySelectorAll('.edit-modal-bg').forEach(m=>m.classList.remove('open'));
+  const d = salesData.find(d=>d.programName===programName && d.year===year);
+  if(!d){ alert('데이터를 찾을 수 없습니다'); return; }
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val??'';};
+  const setOpt=(id,val)=>{const el=document.getElementById(id);if(!el)return;for(let i=0;i<el.options.length;i++)if(el.options[i].value===String(val)||el.options[i].text===String(val)){el.selectedIndex=i;break;}};
+  set('se-key-program', d.programName);
+  set('se-key-year', d.year);
+  setOpt('se-year', d.year);
+  setOpt('se-team', d.team);
+  setOpt('se-type', d.salesType||'');
+  setOpt('se-category', d.category);
+  set('se-clientdetail', d.clientDetail);
+  set('se-clientgroup', d.clientGroup);
+  set('se-program', d.programName);
+  setOpt('se-manager', d.manager);
+  setOpt('se-status', d.status);
+  set('se-period', d.period);
+  set('se-handling', d.handling||'');
+  set('se-revenue', d.revenue||'');
+  set('se-direct', d.directCost||'');
+  set('se-indirect', d.indirectTotal||'');
+  for(let m=1;m<=12;m++) set(`se-m${m}`, d[`m${m}`]||'');
+  calcSalesEditProfit();
+  document.getElementById('sales-edit-modal').classList.add('open');
+}
+
+function calcSalesEditProfit(){
+  const rev = parseFloat(document.getElementById('se-revenue')?.value)||0;
+  const dir = parseFloat(document.getElementById('se-direct')?.value)||0;
+  const ind = parseFloat(document.getElementById('se-indirect')?.value)||0;
+  const pDir=rev-dir, pInd=rev-ind;
+  const rDir=rev?Math.round(pDir/rev*100):0;
+  const rInd=rev?Math.round(pInd/rev*100):0;
+  const fmtC=(n)=>`<span style="color:${n>=0?'var(--ok)':'var(--danger)'}">${n.toLocaleString()}원</span>`;
+  const fmtR=(r)=>`<span style="color:${r>=25?'var(--ok)':r>=0?'var(--text2)':'var(--danger)'}">${r}%</span>`;
+  document.getElementById('se-profit-dir').innerHTML = rev?fmtC(pDir):'—';
+  document.getElementById('se-profit-ind').innerHTML = rev?fmtC(pInd):'—';
+  document.getElementById('se-rate-dir').innerHTML   = rev?fmtR(rDir):'—';
+  document.getElementById('se-rate-ind').innerHTML   = rev?fmtR(rInd):'—';
+}
+
+async function submitSalesEdit(){
+  const origProgram = document.getElementById('se-key-program')?.value;
+  const origYear    = parseInt(document.getElementById('se-key-year')?.value);
+  const d = salesData.find(d=>d.programName===origProgram && d.year===origYear);
+  if(!d){ alert('데이터를 찾을 수 없습니다'); return; }
+
+  const rev = parseFloat(document.getElementById('se-revenue')?.value)||0;
+  const dir = parseFloat(document.getElementById('se-direct')?.value)||0;
+  const ind = parseFloat(document.getElementById('se-indirect')?.value)||0;
+
+  // 로컬 업데이트
+  d.year         = parseInt(document.getElementById('se-year')?.value)||origYear;
+  d.team         = document.getElementById('se-team')?.value||'';
+  d.salesType    = document.getElementById('se-type')?.value||'';
+  d.category     = document.getElementById('se-category')?.value||'';
+  d.clientDetail = document.getElementById('se-clientdetail')?.value||'';
+  d.clientGroup  = document.getElementById('se-clientgroup')?.value||'';
+  d.programName  = document.getElementById('se-program')?.value||origProgram;
+  d.manager      = document.getElementById('se-manager')?.value||'';
+  d.status       = document.getElementById('se-status')?.value||'';
+  d.period       = parseFloat(document.getElementById('se-period')?.value)||0;
+  d.handling     = parseFloat(document.getElementById('se-handling')?.value)||0;
+  d.revenue      = rev; d.directCost=dir; d.indirectTotal=ind;
+  d.profitDirect = rev-dir;
+  d.rateDirect   = rev?Math.round((rev-dir)/rev*100)/100:0;
+  d.rateIndirect = rev?Math.round((rev-ind)/rev*100)/100:0;
+  for(let m=1;m<=12;m++) d[`m${m}`]=parseFloat(document.getElementById(`se-m${m}`)?.value)||0;
+
+  // 서버 저장
+  if(d._id && API){
+    setBtn('btn-sales-edit','저장 중...',true);
+    try{
+      const params = {action:'updateSales', id:d._id,
+        year:d.year, team:d.team, salesType:d.salesType, category:d.category,
+        clientDetail:d.clientDetail, clientGroup:d.clientGroup,
+        programName:d.programName, manager:d.manager, status:d.status,
+        period:d.period, handling:d.handling, revenue:rev,
+        directCost:dir, indirectTotal:ind,
+        profitDirect:d.profitDirect, rateDirect:d.rateDirect, rateIndirect:d.rateIndirect,
+      };
+      for(let m=1;m<=12;m++) params[`m${m}`]=d[`m${m}`];
+      await apiGet(params);
+    }catch(e){}
+    setBtn('btn-sales-edit','수정 저장',false);
+  }
+
+  showAlert('msg-sales-edit','✓ 수정 완료','ok');
+  setTimeout(()=>document.getElementById('sales-edit-modal').classList.remove('open'),800);
+  renderSalesDash();
+}
+
+function deleteSalesRow(programName, year){
+  const d = salesData.find(d=>d.programName===programName && d.year===year);
+  if(!d) return;
+  if(!confirm(`"${programName.slice(0,25)}" 매출을 삭제하시겠습니까?`)) return;
+  salesData = salesData.filter(d=>!(d.programName===programName && d.year===year));
+  if(d._id && API) apiGet({action:'deleteSales', id:d._id});
+  renderSalesDash();
 }
 
 </script>
