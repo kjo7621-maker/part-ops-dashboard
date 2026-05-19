@@ -53,7 +53,7 @@ body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--text);
 .ref-btn:hover{color:rgba(255,255,255,.6)}
 .main{margin-left:228px;min-height:100vh}
 .page{display:none;padding:28px 28px 48px}
-.page.active{display:block;opacity:1}
+.page.active{display:block;opacity:1;visibility:visible}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .ph{margin-bottom:22px}
 .ph h2{font-size:21px;font-weight:700;letter-spacing:-.02em}
@@ -838,336 +838,12 @@ tr:hover td{background:#FAFAF8}
 </div>
 
 
-<!-- 매출 수정 모달 -->
-<div class="edit-modal-bg" id="sales-edit-modal" onclick="if(event.target.id==='sales-edit-modal')this.classList.remove('open')">
-  <div class="edit-modal" style="max-width:680px">
-    <div class="edit-modal-header">
-      <div class="edit-modal-title">매출 수정</div>
-      <button class="edit-modal-close" onclick="document.getElementById('sales-edit-modal').classList.remove('open')">×</button>
-    </div>
-    <div class="alert" id="msg-sales-edit"></div>
-    <input type="hidden" id="se-key-program">
-    <input type="hidden" id="se-key-year">
-    <div class="frow three">
-      <div class="fg"><label>연도</label><select id="se-year"><option>2026</option><option>2025</option><option>2027</option></select></div>
-      <div class="fg"><label>팀</label><select id="se-team"><option>게임콘텐츠사업팀</option><option>게임사파트너사업팀</option><option>스폰서쉽_콘텐츠</option></select></div>
-      <div class="fg"><label>유형</label>
-        <select id="se-type">
-          <option value="">미분류</option>
-          <option>e스포츠</option><option>프로모션 방송</option><option>콘텐츠 제작</option>
-          <option>오프라인 행사</option><option>스폰서십</option><option>티켓 수익</option>
-          <option>커머스</option><option>기타</option>
-        </select>
-      </div>
-    </div>
-    <div class="frow three">
-      <div class="fg"><label>계정분류</label><select id="se-category"><option>프로모션</option><option>스폰서쉽_콘텐츠</option><option>CPM (기여매출)</option><option>기타</option></select></div>
-      <div class="fg"><label>광고주 세부명</label><input id="se-clientdetail" placeholder="예: FC 온라인"></div>
-      <div class="fg"><label>광고주 분류</label><input id="se-clientgroup" placeholder="예: 넥슨"></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>프로그램명</label><input id="se-program"></div>
-      <div class="fg"><label>담당자</label>
-        <select id="se-manager">
-          <option value="">선택</option>
-          <option>글로리장</option><option>윈드림</option><option>우기</option><option>토모</option><option>J.M</option><option>모찌</option><option>베컴</option><option>셀린</option><option>아놀드</option><option>져니</option><option>커비</option><option>레이시</option><option>벅자</option><option>수이</option><option>Denzi</option>
-          <option>무파사</option><option>알렌</option><option>연주</option><option>카푸</option><option>크리스토퍼</option>
-        </select>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>진행사항</label><select id="se-status"><option>진행중</option><option>완료</option><option>제안중</option></select></div>
-      <div class="fg"><label>인식 기간 (개월)</label><input type="number" id="se-period" min="1" max="12"></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>취급고 (원)</label><input type="number" id="se-handling" oninput="calcSalesEditProfit()"></div>
-      <div class="fg"><label>매출 (원)</label><input type="number" id="se-revenue" oninput="calcSalesEditProfit()"></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>직접비 (원)</label><input type="number" id="se-direct" oninput="calcSalesEditProfit()"></div>
-      <div class="fg"><label>간접비 포함 합계 (원)</label><input type="number" id="se-indirect" oninput="calcSalesEditProfit()"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--r);margin-bottom:10px">
-      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익(직접)</div><div style="font-size:14px;font-weight:700" id="se-profit-dir">—</div></div>
-      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익(간접포함)</div><div style="font-size:14px;font-weight:700" id="se-profit-ind">—</div></div>
-      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익률(직접)</div><div style="font-size:14px;font-weight:700" id="se-rate-dir">—</div></div>
-      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익률(간접)</div><div style="font-size:14px;font-weight:700" id="se-rate-ind">—</div></div>
-    </div>
-    <div class="form-section-title">월별 매출 인식</div>
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px">
-      <div class="fg"><label>1월</label><input type="number" id="se-m1"></div>
-      <div class="fg"><label>2월</label><input type="number" id="se-m2"></div>
-      <div class="fg"><label>3월</label><input type="number" id="se-m3"></div>
-      <div class="fg"><label>4월</label><input type="number" id="se-m4"></div>
-      <div class="fg"><label>5월</label><input type="number" id="se-m5"></div>
-      <div class="fg"><label>6월</label><input type="number" id="se-m6"></div>
-      <div class="fg"><label>7월</label><input type="number" id="se-m7"></div>
-      <div class="fg"><label>8월</label><input type="number" id="se-m8"></div>
-      <div class="fg"><label>9월</label><input type="number" id="se-m9"></div>
-      <div class="fg"><label>10월</label><input type="number" id="se-m10"></div>
-      <div class="fg"><label>11월</label><input type="number" id="se-m11"></div>
-      <div class="fg"><label>12월</label><input type="number" id="se-m12"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-sec" onclick="document.getElementById('sales-edit-modal').classList.remove('open')">취소</button>
-      <button class="btn btn-primary" id="btn-sales-edit" onclick="submitSalesEdit()">수정 저장</button>
-    </div>
-  </div>
 
 
-<!-- 업체 수정 모달 -->
-<div class="edit-modal-bg" id="vendor-edit-modal" onclick="closeVendorEditModal(event)">
-  <div class="edit-modal" style="max-width:480px">
-    <div class="edit-modal-header">
-      <div class="edit-modal-title">업체 수정</div>
-      <button class="edit-modal-close" onclick="document.getElementById('vendor-edit-modal').classList.remove('open')">×</button>
-    </div>
-    <div class="alert" id="msg-vendor-edit"></div>
-    <input type="hidden" id="edit-vendor-id">
-    <div class="frow single">
-      <div class="fg"><label>업체명 / 성명</label><input id="ev-name" placeholder="업체명 또는 담당자 성명"></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>담당자명</label><input id="ev-manager" placeholder="담당자 성명"></div>
-      <div class="fg"><label>연락처</label><input id="ev-phone" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13"></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>이메일</label><input id="ev-email" placeholder="example@email.com"></div>
-      <div class="fg"><label>업종 / 분류</label><input id="ev-category" placeholder="예: 방송기술, 무대제작"></div>
-    </div>
-    <div class="frow single" style="margin-bottom:0">
-      <div class="fg"><label>메모</label><input id="ev-note" placeholder="추가 메모 (선택)"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-sec" onclick="document.getElementById('vendor-edit-modal').classList.remove('open')">취소</button>
-      <button class="btn btn-primary" id="btn-vendor-edit" onclick="submitVendorEdit()">수정 저장</button>
-    </div>
-  </div>
-</div>
-
-<!-- 계약 수정 모달 -->
-<div class="edit-modal-bg" id="contract-edit-modal" onclick="closeEditModal(event)">
-  <div class="edit-modal">
-    <div class="edit-modal-header">
-      <div class="edit-modal-title">계약 수정</div>
-      <button class="edit-modal-close" onclick="document.getElementById('contract-edit-modal').classList.remove('open')">×</button>
-    </div>
-    <div class="alert" id="msg-contract-edit"></div>
-    <input type="hidden" id="edit-contract-id">
-    <div class="form-section-title">계약 기본 정보</div>
-    <div class="frow three">
-      <div class="fg"><label>대분류</label>
-        <select id="edit-cat">
-          <option>인건 및 출연</option><option>방송 중계 및 기술</option>
-          <option>콘텐츠 및 영상</option><option>기획 및 사전제작</option><option>무대 및 인프라</option>
-        </select>
-      </div>
-      <div class="fg"><label>중분류</label><input id="edit-subcat"></div>
-      <div class="fg"><label>비용 구분</label>
-        <select id="edit-costtype"><option>직접비</option><option>간접비</option></select>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>업체명</label><input id="edit-vendor"></div>
-      <div class="fg"><label>계약 유형</label>
-        <select id="edit-ctype"><option>용역 계약</option><option>출연 계약</option><option>대관 계약</option><option>변경 합의</option></select>
-      </div>
-    </div>
-    <div class="frow single">
-      <div class="fg"><label>계약 내용</label><textarea id="edit-desc"></textarea></div>
-    </div>
-    <div class="form-section-title">금액 · 지급</div>
-    <div class="frow three">
-      <div class="fg"><label>계약 금액</label><input type="number" id="edit-amount"></div>
-      <div class="fg"><label>지급 구분</label>
-        <select id="edit-paytype"><option>일시지급</option><option>분할지급</option></select>
-      </div>
-      <div class="fg"><label>과세 구분</label>
-        <select id="edit-tax"><option>과세(10%)</option><option>사업소득(3.3%)</option></select>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>선금</label><input type="number" id="edit-prepay"></div>
-      <div class="fg"><label>선금 예정일</label><input type="date" id="edit-prepaydate"></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>잔금</label><input type="number" id="edit-balance"></div>
-      <div class="fg"><label>잔금 예정일</label><input type="date" id="edit-baldate"></div>
-    </div>
-    <div class="form-section-title">담당자</div>
-    <div class="frow three">
-      <div class="fg"><label>담당자명</label><input id="edit-manager"></div>
-      <div class="fg"><label>연락처</label><input id="edit-phone" oninput="formatPhone(this)" maxlength="13"></div>
-      <div class="fg"><label>이메일</label><input id="edit-email"></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>상태</label>
-        <select id="edit-status"><option>기안중</option><option>선금 완료</option><option>최종 완료</option></select>
-      </div>
-      <div class="fg"><label>고용보험</label>
-        <select id="edit-insurance"><option>해당없음</option><option>예술인고용보험</option><option>일반고용보험</option></select>
-      </div>
-    </div>
-    <div class="form-section-title">서류 체크</div>
-    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:4px">
-      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-est" style="accent-color:var(--black);width:14px;height:14px"> 견적서</label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-con" style="accent-color:var(--black);width:14px;height:14px"> 계약서</label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-rev1" style="accent-color:var(--black);width:14px;height:14px"> 검토 요청</label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-rev2" style="accent-color:var(--black);width:14px;height:14px"> 양사 검토</label>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-sec" onclick="document.getElementById('contract-edit-modal').classList.remove('open')">취소</button>
-      <button class="btn btn-primary" id="btn-contract-edit" onclick="submitContractEdit()">수정 저장</button>
-    </div>
-  </div>
-</div>
 
 
-<!-- 업무 수정 모달 -->
-<div class="edit-modal-bg" id="task-edit-modal" onclick="if(event.target.id==='task-edit-modal')this.classList.remove('open')">
-  <div class="edit-modal">
-    <div class="edit-modal-header">
-      <div class="edit-modal-title">업무 수정</div>
-      <button class="edit-modal-close" onclick="document.getElementById('task-edit-modal').classList.remove('open')">×</button>
-    </div>
-    <div class="alert" id="msg-task-edit"></div>
-    <input type="hidden" id="et-id">
-    <div class="frow three">
-      <div class="fg"><label>프로젝트</label>
-        <select id="et-proj"><option>공통</option><option>2026 FSL SPRING</option><option>2026 FSL SUMMER</option><option>2026 FFL SPRING</option><option>2026 FTB SPRING</option><option>콘텐츠</option><option>인플루언서 리그</option></select>
-      </div>
-      <div class="fg"><label>구분</label>
-        <select id="et-type"><option>마케팅</option><option>방송운영</option><option>리그옵스</option><option>현장운영</option><option>행정</option><option>예산</option><option>브랜딩</option></select>
-      </div>
-      <div class="fg"><label>중요도</label>
-        <select id="et-prio"><option>High</option><option>Mid</option><option>Low</option></select>
-      </div>
-    </div>
-    <div class="frow single">
-      <div class="fg"><label>업무명</label><input id="et-name"></div>
-    </div>
-    <div class="frow three">
-      <div class="fg"><label>담당자</label>
-        <select id="et-owner"><option>우기</option><option>모찌</option><option>셀린</option><option>벅자</option><option>레이시</option><option>덴지</option></select>
-      </div>
-      <div class="fg"><label>시작일</label><input type="date" id="et-start"></div>
-      <div class="fg"><label>마감일</label><input type="date" id="et-due"></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>진행률 (%)</label><input type="number" id="et-prog" min="0" max="100"></div>
-      <div class="fg"><label>상태</label>
-        <select id="et-status"><option>시작전</option><option>진행중</option><option>완료</option><option>미정</option></select>
-      </div>
-    </div>
-    <div class="frow single" style="margin-bottom:0">
-      <div class="fg"><label>비고</label><textarea id="et-note"></textarea></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-sec" onclick="document.getElementById('task-edit-modal').classList.remove('open')">취소</button>
-      <button class="btn btn-primary" id="btn-task-edit" onclick="submitTaskEdit()">수정 저장</button>
-    </div>
-  </div>
-</div>
 
-<!-- 근태 수정 모달 -->
-<div class="edit-modal-bg" id="leave-edit-modal" onclick="if(event.target.id==='leave-edit-modal')this.classList.remove('open')">
-  <div class="edit-modal" style="max-width:480px">
-    <div class="edit-modal-header">
-      <div class="edit-modal-title">근태 수정</div>
-      <button class="edit-modal-close" onclick="document.getElementById('leave-edit-modal').classList.remove('open')">×</button>
-    </div>
-    <div class="alert" id="msg-leave-edit"></div>
-    <input type="hidden" id="el-rowIdx">
-    <div class="frow three">
-      <div class="fg"><label>날짜</label><input type="date" id="el-date"></div>
-      <div class="fg"><label>담당자</label>
-        <select id="el-member"><option>우기</option><option>모찌</option><option>셀린</option><option>벅자</option><option>레이시</option><option>덴지</option></select>
-      </div>
-      <div class="fg"><label>종류</label>
-        <select id="el-type"><option>연차</option><option>대휴</option><option>외근</option></select>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>구분</label>
-        <select id="el-gubun"><option>사용</option><option>발생</option><option>촬영</option><option>미팅</option><option>방송</option></select>
-      </div>
-      <div class="fg"><label>일수</label><input type="number" id="el-days" step="0.5"></div>
-    </div>
-    <div class="frow single" style="margin-bottom:0">
-      <div class="fg"><label>내용</label><input id="el-content"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-sec" onclick="document.getElementById('leave-edit-modal').classList.remove('open')">취소</button>
-      <button class="btn btn-primary" id="btn-leave-edit" onclick="submitLeaveEdit()">수정 저장</button>
-    </div>
-  </div>
-</div>
 
-<!-- 일정 수정 모달 -->
-<div class="edit-modal-bg" id="official-edit-modal" onclick="if(event.target.id==='official-edit-modal')this.classList.remove('open')">
-  <div class="edit-modal" style="max-width:440px">
-    <div class="edit-modal-header">
-      <div class="edit-modal-title">일정 수정</div>
-      <button class="edit-modal-close" onclick="document.getElementById('official-edit-modal').classList.remove('open')">×</button>
-    </div>
-    <div class="alert" id="msg-official-edit"></div>
-    <input type="hidden" id="eo-id">
-    <div class="frow three">
-      <div class="fg"><label>날짜</label><input type="date" id="eo-date"></div>
-      <div class="fg"><label>프로젝트</label>
-        <select id="eo-proj"><option>FSL</option><option>FFL</option><option>FTB</option><option>FC PRO</option><option>공통</option></select>
-      </div>
-      <div class="fg"><label>내용</label><input id="eo-content"></div>
-    </div>
-    <div class="frow single" style="margin-bottom:0">
-      <div class="fg"><label>비고</label><input id="eo-note"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-sec" onclick="document.getElementById('official-edit-modal').classList.remove('open')">취소</button>
-      <button class="btn btn-primary" id="btn-official-edit" onclick="submitOfficialEdit()">수정 저장</button>
-    </div>
-  </div>
-</div>
-
-<!-- 프로젝트 수정 모달 -->
-<div class="edit-modal-bg" id="project-edit-modal" onclick="if(event.target.id==='project-edit-modal')this.classList.remove('open')">
-  <div class="edit-modal">
-    <div class="edit-modal-header">
-      <div class="edit-modal-title">프로젝트 수정</div>
-      <button class="edit-modal-close" onclick="document.getElementById('project-edit-modal').classList.remove('open')">×</button>
-    </div>
-    <div class="alert" id="msg-project-edit"></div>
-    <input type="hidden" id="ep-id">
-    <div class="frow three">
-      <div class="fg"><label>광고주 세부명</label><input id="ep-client"></div>
-      <div class="fg"><label>광고주 분류</label><input id="ep-clientgroup"></div>
-      <div class="fg"><label>프로젝트명</label><input id="ep-name"></div>
-    </div>
-    <div class="frow three">
-      <div class="fg"><label>담당자</label>
-        <select id="ep-owner"><option>우기</option><option>모찌</option><option>셀린</option><option>벅자</option><option>레이시</option><option>덴지</option></select>
-      </div>
-      <div class="fg"><label>상태</label>
-        <select id="ep-status"><option>제안중</option><option>진행중</option><option>완료</option></select>
-      </div>
-      <div class="fg"><label>유형</label>
-        <select id="ep-type"><option>리그</option><option>광고</option><option>콘텐츠</option><option>행사</option><option>기타</option></select>
-      </div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>매출 인식 시작</label><input type="date" id="ep-start"></div>
-      <div class="fg"><label>매출 인식 종료</label><input type="date" id="ep-end"></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>취급고</label><input type="number" id="ep-handling"></div>
-      <div class="fg"><label>비고</label><input id="ep-note"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-sec" onclick="document.getElementById('project-edit-modal').classList.remove('open')">취소</button>
-      <button class="btn btn-primary" id="btn-project-edit" onclick="submitProjectEdit()">수정 저장</button>
-    </div>
-  </div>
-</div>
 
 
 <!-- 프로젝트 현황 -->
@@ -3941,5 +3617,336 @@ function deleteSalesRow(programName, year){
 }
 
 </script>
+
+<!-- 매출 수정 모달 -->
+<div class="edit-modal-bg" id="sales-edit-modal" onclick="if(event.target.id==='sales-edit-modal')this.classList.remove('open')">
+  <div class="edit-modal" style="max-width:680px">
+    <div class="edit-modal-header">
+      <div class="edit-modal-title">매출 수정</div>
+      <button class="edit-modal-close" onclick="document.getElementById('sales-edit-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="alert" id="msg-sales-edit"></div>
+    <input type="hidden" id="se-key-program">
+    <input type="hidden" id="se-key-year">
+    <div class="frow three">
+      <div class="fg"><label>연도</label><select id="se-year"><option>2026</option><option>2025</option><option>2027</option></select></div>
+      <div class="fg"><label>팀</label><select id="se-team"><option>게임콘텐츠사업팀</option><option>게임사파트너사업팀</option><option>스폰서쉽_콘텐츠</option></select></div>
+      <div class="fg"><label>유형</label>
+        <select id="se-type">
+          <option value="">미분류</option>
+          <option>e스포츠</option><option>프로모션 방송</option><option>콘텐츠 제작</option>
+          <option>오프라인 행사</option><option>스폰서십</option><option>티켓 수익</option>
+          <option>커머스</option><option>기타</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow three">
+      <div class="fg"><label>계정분류</label><select id="se-category"><option>프로모션</option><option>스폰서쉽_콘텐츠</option><option>CPM (기여매출)</option><option>기타</option></select></div>
+      <div class="fg"><label>광고주 세부명</label><input id="se-clientdetail" placeholder="예: FC 온라인"></div>
+      <div class="fg"><label>광고주 분류</label><input id="se-clientgroup" placeholder="예: 넥슨"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>프로그램명</label><input id="se-program"></div>
+      <div class="fg"><label>담당자</label>
+        <select id="se-manager">
+          <option value="">선택</option>
+          <option>글로리장</option><option>윈드림</option><option>우기</option><option>토모</option><option>J.M</option><option>모찌</option><option>베컴</option><option>셀린</option><option>아놀드</option><option>져니</option><option>커비</option><option>레이시</option><option>벅자</option><option>수이</option><option>Denzi</option>
+          <option>무파사</option><option>알렌</option><option>연주</option><option>카푸</option><option>크리스토퍼</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>진행사항</label><select id="se-status"><option>진행중</option><option>완료</option><option>제안중</option></select></div>
+      <div class="fg"><label>인식 기간 (개월)</label><input type="number" id="se-period" min="1" max="12"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>취급고 (원)</label><input type="number" id="se-handling" oninput="calcSalesEditProfit()"></div>
+      <div class="fg"><label>매출 (원)</label><input type="number" id="se-revenue" oninput="calcSalesEditProfit()"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>직접비 (원)</label><input type="number" id="se-direct" oninput="calcSalesEditProfit()"></div>
+      <div class="fg"><label>간접비 포함 합계 (원)</label><input type="number" id="se-indirect" oninput="calcSalesEditProfit()"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--r);margin-bottom:10px">
+      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익(직접)</div><div style="font-size:14px;font-weight:700" id="se-profit-dir">—</div></div>
+      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익(간접포함)</div><div style="font-size:14px;font-weight:700" id="se-profit-ind">—</div></div>
+      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익률(직접)</div><div style="font-size:14px;font-weight:700" id="se-rate-dir">—</div></div>
+      <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익률(간접)</div><div style="font-size:14px;font-weight:700" id="se-rate-ind">—</div></div>
+    </div>
+    <div class="form-section-title">월별 매출 인식</div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px">
+      <div class="fg"><label>1월</label><input type="number" id="se-m1"></div>
+      <div class="fg"><label>2월</label><input type="number" id="se-m2"></div>
+      <div class="fg"><label>3월</label><input type="number" id="se-m3"></div>
+      <div class="fg"><label>4월</label><input type="number" id="se-m4"></div>
+      <div class="fg"><label>5월</label><input type="number" id="se-m5"></div>
+      <div class="fg"><label>6월</label><input type="number" id="se-m6"></div>
+      <div class="fg"><label>7월</label><input type="number" id="se-m7"></div>
+      <div class="fg"><label>8월</label><input type="number" id="se-m8"></div>
+      <div class="fg"><label>9월</label><input type="number" id="se-m9"></div>
+      <div class="fg"><label>10월</label><input type="number" id="se-m10"></div>
+      <div class="fg"><label>11월</label><input type="number" id="se-m11"></div>
+      <div class="fg"><label>12월</label><input type="number" id="se-m12"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('sales-edit-modal').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="btn-sales-edit" onclick="submitSalesEdit()">수정 저장</button>
+    </div>
+  </div>
+
+
+<!-- 업체 수정 모달 -->
+<div class="edit-modal-bg" id="vendor-edit-modal" onclick="closeVendorEditModal(event)">
+  <div class="edit-modal" style="max-width:480px">
+    <div class="edit-modal-header">
+      <div class="edit-modal-title">업체 수정</div>
+      <button class="edit-modal-close" onclick="document.getElementById('vendor-edit-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="alert" id="msg-vendor-edit"></div>
+    <input type="hidden" id="edit-vendor-id">
+    <div class="frow single">
+      <div class="fg"><label>업체명 / 성명</label><input id="ev-name" placeholder="업체명 또는 담당자 성명"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>담당자명</label><input id="ev-manager" placeholder="담당자 성명"></div>
+      <div class="fg"><label>연락처</label><input id="ev-phone" placeholder="010-0000-0000" oninput="formatPhone(this)" maxlength="13"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>이메일</label><input id="ev-email" placeholder="example@email.com"></div>
+      <div class="fg"><label>업종 / 분류</label><input id="ev-category" placeholder="예: 방송기술, 무대제작"></div>
+    </div>
+    <div class="frow single" style="margin-bottom:0">
+      <div class="fg"><label>메모</label><input id="ev-note" placeholder="추가 메모 (선택)"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('vendor-edit-modal').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="btn-vendor-edit" onclick="submitVendorEdit()">수정 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 계약 수정 모달 -->
+<div class="edit-modal-bg" id="contract-edit-modal" onclick="closeEditModal(event)">
+  <div class="edit-modal">
+    <div class="edit-modal-header">
+      <div class="edit-modal-title">계약 수정</div>
+      <button class="edit-modal-close" onclick="document.getElementById('contract-edit-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="alert" id="msg-contract-edit"></div>
+    <input type="hidden" id="edit-contract-id">
+    <div class="form-section-title">계약 기본 정보</div>
+    <div class="frow three">
+      <div class="fg"><label>대분류</label>
+        <select id="edit-cat">
+          <option>인건 및 출연</option><option>방송 중계 및 기술</option>
+          <option>콘텐츠 및 영상</option><option>기획 및 사전제작</option><option>무대 및 인프라</option>
+        </select>
+      </div>
+      <div class="fg"><label>중분류</label><input id="edit-subcat"></div>
+      <div class="fg"><label>비용 구분</label>
+        <select id="edit-costtype"><option>직접비</option><option>간접비</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>업체명</label><input id="edit-vendor"></div>
+      <div class="fg"><label>계약 유형</label>
+        <select id="edit-ctype"><option>용역 계약</option><option>출연 계약</option><option>대관 계약</option><option>변경 합의</option></select>
+      </div>
+    </div>
+    <div class="frow single">
+      <div class="fg"><label>계약 내용</label><textarea id="edit-desc"></textarea></div>
+    </div>
+    <div class="form-section-title">금액 · 지급</div>
+    <div class="frow three">
+      <div class="fg"><label>계약 금액</label><input type="number" id="edit-amount"></div>
+      <div class="fg"><label>지급 구분</label>
+        <select id="edit-paytype"><option>일시지급</option><option>분할지급</option></select>
+      </div>
+      <div class="fg"><label>과세 구분</label>
+        <select id="edit-tax"><option>과세(10%)</option><option>사업소득(3.3%)</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>선금</label><input type="number" id="edit-prepay"></div>
+      <div class="fg"><label>선금 예정일</label><input type="date" id="edit-prepaydate"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>잔금</label><input type="number" id="edit-balance"></div>
+      <div class="fg"><label>잔금 예정일</label><input type="date" id="edit-baldate"></div>
+    </div>
+    <div class="form-section-title">담당자</div>
+    <div class="frow three">
+      <div class="fg"><label>담당자명</label><input id="edit-manager"></div>
+      <div class="fg"><label>연락처</label><input id="edit-phone" oninput="formatPhone(this)" maxlength="13"></div>
+      <div class="fg"><label>이메일</label><input id="edit-email"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>상태</label>
+        <select id="edit-status"><option>기안중</option><option>선금 완료</option><option>최종 완료</option></select>
+      </div>
+      <div class="fg"><label>고용보험</label>
+        <select id="edit-insurance"><option>해당없음</option><option>예술인고용보험</option><option>일반고용보험</option></select>
+      </div>
+    </div>
+    <div class="form-section-title">서류 체크</div>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:4px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-est" style="accent-color:var(--black);width:14px;height:14px"> 견적서</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-con" style="accent-color:var(--black);width:14px;height:14px"> 계약서</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-rev1" style="accent-color:var(--black);width:14px;height:14px"> 검토 요청</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" id="edit-rev2" style="accent-color:var(--black);width:14px;height:14px"> 양사 검토</label>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('contract-edit-modal').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="btn-contract-edit" onclick="submitContractEdit()">수정 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 업무 수정 모달 -->
+<div class="edit-modal-bg" id="task-edit-modal" onclick="if(event.target.id==='task-edit-modal')this.classList.remove('open')">
+  <div class="edit-modal">
+    <div class="edit-modal-header">
+      <div class="edit-modal-title">업무 수정</div>
+      <button class="edit-modal-close" onclick="document.getElementById('task-edit-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="alert" id="msg-task-edit"></div>
+    <input type="hidden" id="et-id">
+    <div class="frow three">
+      <div class="fg"><label>프로젝트</label>
+        <select id="et-proj"><option>공통</option><option>2026 FSL SPRING</option><option>2026 FSL SUMMER</option><option>2026 FFL SPRING</option><option>2026 FTB SPRING</option><option>콘텐츠</option><option>인플루언서 리그</option></select>
+      </div>
+      <div class="fg"><label>구분</label>
+        <select id="et-type"><option>마케팅</option><option>방송운영</option><option>리그옵스</option><option>현장운영</option><option>행정</option><option>예산</option><option>브랜딩</option></select>
+      </div>
+      <div class="fg"><label>중요도</label>
+        <select id="et-prio"><option>High</option><option>Mid</option><option>Low</option></select>
+      </div>
+    </div>
+    <div class="frow single">
+      <div class="fg"><label>업무명</label><input id="et-name"></div>
+    </div>
+    <div class="frow three">
+      <div class="fg"><label>담당자</label>
+        <select id="et-owner"><option>우기</option><option>모찌</option><option>셀린</option><option>벅자</option><option>레이시</option><option>덴지</option></select>
+      </div>
+      <div class="fg"><label>시작일</label><input type="date" id="et-start"></div>
+      <div class="fg"><label>마감일</label><input type="date" id="et-due"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>진행률 (%)</label><input type="number" id="et-prog" min="0" max="100"></div>
+      <div class="fg"><label>상태</label>
+        <select id="et-status"><option>시작전</option><option>진행중</option><option>완료</option><option>미정</option></select>
+      </div>
+    </div>
+    <div class="frow single" style="margin-bottom:0">
+      <div class="fg"><label>비고</label><textarea id="et-note"></textarea></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('task-edit-modal').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="btn-task-edit" onclick="submitTaskEdit()">수정 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 근태 수정 모달 -->
+<div class="edit-modal-bg" id="leave-edit-modal" onclick="if(event.target.id==='leave-edit-modal')this.classList.remove('open')">
+  <div class="edit-modal" style="max-width:480px">
+    <div class="edit-modal-header">
+      <div class="edit-modal-title">근태 수정</div>
+      <button class="edit-modal-close" onclick="document.getElementById('leave-edit-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="alert" id="msg-leave-edit"></div>
+    <input type="hidden" id="el-rowIdx">
+    <div class="frow three">
+      <div class="fg"><label>날짜</label><input type="date" id="el-date"></div>
+      <div class="fg"><label>담당자</label>
+        <select id="el-member"><option>우기</option><option>모찌</option><option>셀린</option><option>벅자</option><option>레이시</option><option>덴지</option></select>
+      </div>
+      <div class="fg"><label>종류</label>
+        <select id="el-type"><option>연차</option><option>대휴</option><option>외근</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>구분</label>
+        <select id="el-gubun"><option>사용</option><option>발생</option><option>촬영</option><option>미팅</option><option>방송</option></select>
+      </div>
+      <div class="fg"><label>일수</label><input type="number" id="el-days" step="0.5"></div>
+    </div>
+    <div class="frow single" style="margin-bottom:0">
+      <div class="fg"><label>내용</label><input id="el-content"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('leave-edit-modal').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="btn-leave-edit" onclick="submitLeaveEdit()">수정 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 일정 수정 모달 -->
+<div class="edit-modal-bg" id="official-edit-modal" onclick="if(event.target.id==='official-edit-modal')this.classList.remove('open')">
+  <div class="edit-modal" style="max-width:440px">
+    <div class="edit-modal-header">
+      <div class="edit-modal-title">일정 수정</div>
+      <button class="edit-modal-close" onclick="document.getElementById('official-edit-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="alert" id="msg-official-edit"></div>
+    <input type="hidden" id="eo-id">
+    <div class="frow three">
+      <div class="fg"><label>날짜</label><input type="date" id="eo-date"></div>
+      <div class="fg"><label>프로젝트</label>
+        <select id="eo-proj"><option>FSL</option><option>FFL</option><option>FTB</option><option>FC PRO</option><option>공통</option></select>
+      </div>
+      <div class="fg"><label>내용</label><input id="eo-content"></div>
+    </div>
+    <div class="frow single" style="margin-bottom:0">
+      <div class="fg"><label>비고</label><input id="eo-note"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('official-edit-modal').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="btn-official-edit" onclick="submitOfficialEdit()">수정 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 프로젝트 수정 모달 -->
+<div class="edit-modal-bg" id="project-edit-modal" onclick="if(event.target.id==='project-edit-modal')this.classList.remove('open')">
+  <div class="edit-modal">
+    <div class="edit-modal-header">
+      <div class="edit-modal-title">프로젝트 수정</div>
+      <button class="edit-modal-close" onclick="document.getElementById('project-edit-modal').classList.remove('open')">×</button>
+    </div>
+    <div class="alert" id="msg-project-edit"></div>
+    <input type="hidden" id="ep-id">
+    <div class="frow three">
+      <div class="fg"><label>광고주 세부명</label><input id="ep-client"></div>
+      <div class="fg"><label>광고주 분류</label><input id="ep-clientgroup"></div>
+      <div class="fg"><label>프로젝트명</label><input id="ep-name"></div>
+    </div>
+    <div class="frow three">
+      <div class="fg"><label>담당자</label>
+        <select id="ep-owner"><option>우기</option><option>모찌</option><option>셀린</option><option>벅자</option><option>레이시</option><option>덴지</option></select>
+      </div>
+      <div class="fg"><label>상태</label>
+        <select id="ep-status"><option>제안중</option><option>진행중</option><option>완료</option></select>
+      </div>
+      <div class="fg"><label>유형</label>
+        <select id="ep-type"><option>리그</option><option>광고</option><option>콘텐츠</option><option>행사</option><option>기타</option></select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>매출 인식 시작</label><input type="date" id="ep-start"></div>
+      <div class="fg"><label>매출 인식 종료</label><input type="date" id="ep-end"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>취급고</label><input type="number" id="ep-handling"></div>
+      <div class="fg"><label>비고</label><input id="ep-note"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-sec" onclick="document.getElementById('project-edit-modal').classList.remove('open')">취소</button>
+      <button class="btn btn-primary" id="btn-project-edit" onclick="submitProjectEdit()">수정 저장</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
