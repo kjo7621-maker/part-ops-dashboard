@@ -383,7 +383,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.10.0 · 2026-05-19</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.11.0 · 2026-05-19</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -3215,8 +3215,8 @@ function calcBiz(){
   const a1 = gv('biz-a1-actual');
   const a2 = gv('biz-a2-actual');
   const aAct = a1 + a2;
-  // 권고 비율 계산 기준은 총 매출(운영+상금)
-  const a = aAct;
+  // 권고 비율 계산 기준 = A1 운영 매출만 (상금 매출 제외)
+  const a = a1;
 
   // 총 매출 표시
   const aTotEl = document.getElementById('biz-a-total');
