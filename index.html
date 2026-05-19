@@ -52,8 +52,8 @@ body{font-family:'Pretendard',sans-serif;background:var(--bg);color:var(--text);
 .ref-btn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.25);padding:2px;border-radius:4px;display:flex}
 .ref-btn:hover{color:rgba(255,255,255,.6)}
 .main{margin-left:228px;min-height:100vh}
-.page{display:none;padding:28px 28px 48px;animation:up .2s ease}
-.page.active{display:block}
+.page{display:none;padding:28px 28px 48px}
+.page.active{display:block;opacity:1}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .ph{margin-bottom:22px}
 .ph h2{font-size:21px;font-weight:700;letter-spacing:-.02em}
@@ -383,7 +383,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.17.0 · 2026-05-19</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.18.0 · 2026-05-19</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -620,6 +620,7 @@ tr:hover td{background:#FAFAF8}
       <button class="btn btn-primary" id="btn-task" onclick="submitTask()">업무 등록</button>
     </div>
   </div>
+</div>
 <!-- 근태 등록 -->
 <div id="page-add-leave" class="page">
   <div class="ph"><h2>근태 등록</h2></div>
@@ -1257,7 +1258,6 @@ tr:hover td{background:#FAFAF8}
       <button class="btn btn-primary" id="btn-proj-add" onclick="submitProjAdd()">프로젝트 등록</button>
     </div>
   </div>
-</div>
 
 </main>
 
