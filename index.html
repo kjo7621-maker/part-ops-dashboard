@@ -383,7 +383,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.6.0 · 2026-05-19</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.8.0 · 2026-05-19</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -909,6 +909,16 @@ tr:hover td{background:#FAFAF8}
     <div id="pdt-biz" style="display:none">
       <div class="card">
         <div class="alert" id="msg-biz"></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:0.5px solid var(--border)">
+          <div style="font-size:12px;font-weight:700;color:var(--text2)">프로젝트 유형</div>
+          <select id="biz-proj-type" onchange="calcBiz()" style="font-size:13px;height:34px;padding:0 10px;border:0.5px solid var(--border2);border-radius:var(--r);font-family:inherit;background:var(--surface)">
+            <option value="esports">e스포츠 리그</option>
+            <option value="content">콘텐츠</option>
+            <option value="event">행사/이벤트</option>
+            <option value="ad">광고/캠페인</option>
+          </select>
+          <span style="font-size:11px;color:var(--text3)">선택한 유형에 맞게 권고 비율이 자동 적용됩니다</span>
+        </div>
         <!-- 매출 -->
         <div class="biz-section">
           <div class="biz-sec-title">A. 매출 (Revenue)</div>
@@ -3184,14 +3194,18 @@ function calcBiz(){
   const a   = gv('biz-a-planned');
   const aAct= gv('biz-a-actual');
 
-  // 목표 수익률 25% → 직접비(C+M) = 매출 × 75%
-  // C1=40%, C2=20%, C3=20%, C4=20%, C5=12%, M1=8% (합산 120% → 75%로 스케일)
-  // 실제 배분: C+M=75%이므로 각 비율을 120분의 75로 환산
-  const guideRates = {c1:.25, c2:.125, c3:.125, c4:.125, c5:.075, m1:.05};
-  // 합산 = 75% (목표 수익률 25% 기준)
+  // 유형별 권고 비율 (직접비 합계 = 매출×75%, 목표 수익률 25%)
+  const TYPE_RATES = {
+    esports: {c1:.35, c2:.13, c3:.15, c4:.07, c5:.05, m1:0},
+    content: {c1:.10, c2:.55, c3:.08, c4:.02, c5:0,   m1:0},
+    event:   {c1:.25, c2:.27, c3:.08, c4:.10, c5:.05, m1:0},
+    ad:      {c1:.05, c2:.65, c3:.05, c4:0,   c5:0,   m1:0},
+  };
+  const ptype = document.getElementById('biz-proj-type')?.value || 'esports';
+  const guideRates = TYPE_RATES[ptype] || TYPE_RATES.esports;
   Object.entries(guideRates).forEach(([k,rate])=>{
     const el=document.getElementById('biz-'+k+'-planned');
-    if(el) el.value=a?Math.round(a*rate):'';
+    if(el) el.value=a&&rate?Math.round(a*rate):'';
   });
 
   const codes=['c1','c2','c3','c4','c5'];
@@ -3233,22 +3247,22 @@ function calcBiz(){
   const directP = cP + mP;
   const directA = cA + mA;
 
-  // 손익 요약
-  const pP=gv('biz-p1-planned')+gv('biz-p2-planned');
-  const dP=gv('biz-d1-planned')+gv('biz-d2-planned')+gv('biz-d3-planned');
-  const totalCostP=directP+pP+dP;
-  const profitDirP=a-directP;   // 직접비(C+M) 기준 수익
-  const profitTotP=a-totalCostP; // 전체비용 기준 수익
-  const rateDirP=a?Math.round(profitDirP/a*100):0;
-  const rateTotP=a?Math.round(profitTotP/a*100):0;
+  // 손익 요약 — 실행 예산(actual) 기준
+  const pA=gv('biz-p1-actual')+gv('biz-p2-actual');
+  const dA=gv('biz-d1-actual')+gv('biz-d2-actual')+gv('biz-d3-actual');
+  const totalCostA=directA+pA+dA;
+  const profitDirA=aAct-directA;
+  const profitTotA=aAct-totalCostA;
+  const rateDirA=aAct?Math.round(profitDirA/aAct*100):0;
+  const rateTotA=aAct?Math.round(profitTotA/aAct*100):0;
 
   const sumEl=document.getElementById('biz-summary-area');
   if(sumEl) sumEl.innerHTML=`
-    <div class="biz-sum-item"><div class="bl">총 매출</div><div class="bv">${a?a.toLocaleString()+'원':'—'}</div></div>
-    <div class="biz-sum-item"><div class="bl">직접비(C+M) 합계</div><div class="bv">${directP?directP.toLocaleString()+'원':'—'}</div></div>
-    <div class="biz-sum-item"><div class="bl">수익 (직접비 기준)</div><div class="bv ${profitDirP>=0?'pos':'neg'}">${a?profitDirP.toLocaleString()+'원':'—'}</div></div>
-    <div class="biz-sum-item"><div class="bl">수익률 (직접비 C+M)</div><div class="bv ${rateDirP>=0?'pos':'neg'}">${a?rateDirP+'% '+(rateDirP>=25?'✅':'⚠️ 목표 25% 미달'):'—'}</div></div>
-    <div class="biz-sum-item"><div class="bl">수익률 (전체비용)</div><div class="bv ${rateTotP>=0?'pos':'neg'}">${a?rateTotP+'%':'—'}</div></div>`;
+    <div class="biz-sum-item"><div class="bl">예상 매출</div><div class="bv">${aAct?aAct.toLocaleString()+'원':'—'}</div></div>
+    <div class="biz-sum-item"><div class="bl">직접비(C+M) 합계</div><div class="bv">${directA?directA.toLocaleString()+'원':'—'}</div></div>
+    <div class="biz-sum-item"><div class="bl">수익 (직접비 기준)</div><div class="bv ${profitDirA>=0?'pos':'neg'}">${aAct?profitDirA.toLocaleString()+'원':'—'}</div></div>
+    <div class="biz-sum-item"><div class="bl">수익률 (직접비 C+M)</div><div class="bv ${rateDirA>=0?'pos':'neg'}">${aAct?rateDirA+'% '+(rateDirA>=25?'✅':'⚠️ 목표 25% 미달'):'—'}</div></div>
+    <div class="biz-sum-item"><div class="bl">수익률 (전체비용)</div><div class="bv ${rateTotA>=0?'pos':'neg'}">${aAct?rateTotA+'%':'—'}</div></div>`;
 }
 
 
