@@ -383,7 +383,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.8.0 · 2026-05-19</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.9.0 · 2026-05-19</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -3174,6 +3174,15 @@ const BIZ_CODES = [
 
 function loadBizReview(){
   const id=String(selProjId);
+  // 프로젝트 유형에 따라 드롭다운 자동 세팅
+  const proj=pmProjects.find(p=>String(p.ID)===id);
+  if(proj){
+    const typeMap={'리그':'esports','e스포츠':'esports','콘텐츠':'content','행사':'event','광고':'ad','캠페인':'ad','기타':'esports'};
+    const ptype=proj['유형']||'';
+    const matched=Object.entries(typeMap).find(([k])=>ptype.includes(k));
+    const sel=document.getElementById('biz-proj-type');
+    if(sel&&matched) sel.value=matched[1];
+  }
   const data=pmBizReviews.filter(r=>String(r['프로젝트ID'])===id);
   // 기존 저장값 폼에 채우기
   data.forEach(r=>{
