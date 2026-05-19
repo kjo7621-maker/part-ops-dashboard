@@ -3330,10 +3330,10 @@ function renderSalesList(){
     return true;
   });
 
+  filteredSalesList = list;
   document.getElementById('sales-count').textContent = list.length;
 
-  const tbody = document.getElementById('sales-list-tbody');
-  tbody.innerHTML = list.length ? list.map(d=>{
+  tbody.innerHTML = list.length ? list.map((d,idx)=>{
     const rDir = d.revenue ? Math.round((d.revenue-d.directCost)/d.revenue*100) : 0;
     const rInd = d.revenue ? Math.round((d.revenue-d.indirectTotal)/d.revenue*100) : 0;
     const stCls = d.status==='완료'?'bd-done':d.status==='진행중'?'bd-go':'bd-wait';
@@ -3355,8 +3355,8 @@ function renderSalesList(){
       <td style="text-align:right;font-size:12px;color:${rInd>=0?'var(--text2)':'var(--danger)'}">${d.revenue?rInd+'%':'—'}</td>
       <td><span class="badge ${stCls}">${d.status||''}</span></td>
       <td><div class="row-actions">
-        <button class="act-btn" onclick="openSalesEdit(${JSON.stringify(d.programName)},${d.year})">✏️</button>
-        <button class="act-btn danger" onclick="deleteSalesRow(${JSON.stringify(d.programName)},${d.year})">🗑</button>
+        <button class="act-btn" onclick="openSalesEditByIdx(${idx})">✏️</button>
+        <button class="act-btn danger" onclick="deleteSalesRowByIdx(${idx})">🗑</button>
       </div></td>
     </tr>`;
   }).join('') : '<tr><td colspan="14" class="empty">데이터 없음</td></tr>';
