@@ -2614,14 +2614,17 @@ function selectVendorAC(prefix, name){
   set(prefix+'-manager', v['담당자']);
   set(prefix+'-phone',   v['연락처']);
   set(prefix+'-email',   v['이메일']);
-  document.getElementById(prefix+'-vendor-drop')?.classList.remove('open');
+  const drop = document.getElementById(prefix+'-vendor-drop');
+  if(drop){ drop.classList.remove('open'); drop.style.display='none'; }
 }
 
 // 드롭다운 외부 클릭 시 닫기
 document.addEventListener('click', e=>{
   document.querySelectorAll('.vendor-ac-drop').forEach(d=>{
-    if(!d.contains(e.target)&&e.target.id!==d.id.replace('-drop',''))
+    if(!d.contains(e.target)&&e.target.id!==d.id.replace('-drop','')){
       d.classList.remove('open');
+      d.style.display='none';
+    }
   });
 });
 
