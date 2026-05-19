@@ -383,7 +383,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.9.0 · 2026-05-19</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v2.10.0 · 2026-05-19</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -926,11 +926,22 @@ tr:hover td{background:#FAFAF8}
             <span>항목</span><span style="text-align:right">권고 금액 (원)</span><span style="text-align:right">실행 예산 (원)</span><span style="text-align:right">차이</span><span></span>
           </div>
           <div class="biz-row">
-            <span class="label">총 예상 매출 (A)</span>
-            <input type="number" id="biz-a-planned" placeholder="0" oninput="calcBiz()">
-            <input type="number" id="biz-a-actual" placeholder="0" oninput="calcBiz()">
-            <span id="biz-a-diff" style="text-align:right;font-variant-numeric:tabular-nums;color:var(--text3)">—</span>
+            <span class="label">A1. 운영 매출</span>
             <span></span>
+            <input type="number" id="biz-a1-actual" placeholder="0" oninput="calcBiz()">
+            <span></span><span></span>
+          </div>
+          <div class="biz-row">
+            <span class="label">A2. 상금 매출</span>
+            <span></span>
+            <input type="number" id="biz-a2-actual" placeholder="0" oninput="calcBiz()">
+            <span></span><span></span>
+          </div>
+          <div class="biz-total-row" style="background:var(--ok-bg)">
+            <span style="color:var(--ok)">A 총 매출 합계</span>
+            <span></span>
+            <span id="biz-a-total" style="text-align:right;font-variant-numeric:tabular-nums;color:var(--ok);font-weight:700">0원</span>
+            <span></span><span></span>
           </div>
         </div>
         <!-- 직접비 C -->
@@ -3200,13 +3211,21 @@ function fmtW(n){ return n.toLocaleString()+'원'; }
 function diffColor(n){ return n>=0?'var(--ok)':'var(--danger)'; }
 
 function calcBiz(){
-  const a   = gv('biz-a-planned');
-  const aAct= gv('biz-a-actual');
+  // 매출 = A1 운영 + A2 상금
+  const a1 = gv('biz-a1-actual');
+  const a2 = gv('biz-a2-actual');
+  const aAct = a1 + a2;
+  // 권고 비율 계산 기준은 총 매출(운영+상금)
+  const a = aAct;
 
-  // 유형별 권고 비율 (직접비 합계 = 매출×75%, 목표 수익률 25%)
+  // 총 매출 표시
+  const aTotEl = document.getElementById('biz-a-total');
+  if(aTotEl) aTotEl.textContent = aAct ? aAct.toLocaleString()+'원' : '0원';
+
+  // 유형별 권고 비율
   const TYPE_RATES = {
     esports: {c1:.35, c2:.13, c3:.15, c4:.07, c5:.05, m1:0},
-    content: {c1:.10, c2:.55, c3:.08, c4:.02, c5:0,   m1:0},
+    content: {c1:.10, c2:.55, c3:.08, c4:.02, c5:.05, m1:0},
     event:   {c1:.25, c2:.27, c3:.08, c4:.10, c5:.05, m1:0},
     ad:      {c1:.05, c2:.65, c3:.05, c4:0,   c5:0,   m1:0},
   };
@@ -3220,9 +3239,9 @@ function calcBiz(){
   const codes=['c1','c2','c3','c4','c5'];
   let cP=0, cA=0;
   codes.forEach(c=>{
-    const p=gv('biz-'+c+'-planned'), a2=gv('biz-'+c+'-actual');
-    cP+=p; cA+=a2;
-    const diff=p-a2;
+    const p=gv('biz-'+c+'-planned'), a2v=gv('biz-'+c+'-actual');
+    cP+=p; cA+=a2v;
+    const diff=p-a2v;
     const el=document.getElementById('biz-'+c+'-diff');
     if(el){ el.textContent=diff?diff.toLocaleString()+'원':'—'; el.style.color=diffColor(diff); }
   });
@@ -3231,32 +3250,22 @@ function calcBiz(){
   const cdiff=cP-cA;
   const cdEl=document.getElementById('biz-c-diff-total');
   if(cdEl){ cdEl.textContent=cdiff?cdiff.toLocaleString()+'원':'—'; cdEl.style.color=diffColor(cdiff); }
-
   const pctEl=document.getElementById('biz-c-pct');
   if(pctEl&&a) pctEl.textContent='매출의 '+Math.round(cP/a*100)+'%';
 
-  const aDiff=a-aAct;
-  const aDEl=document.getElementById('biz-a-diff');
-  if(aDEl){ aDEl.textContent=aDiff?aDiff.toLocaleString()+'원':'—'; aDEl.style.color=diffColor(aDiff); }
-
-  // P, D diff
-  [['p1'],['p2'],['d1'],['d2'],['d3']].forEach(([k])=>{
-    const p=gv('biz-'+k+'-planned'), a2=gv('biz-'+k+'-actual'), diff=p-a2;
+  // P, D, M diff
+  [['p1'],['p2'],['d1'],['d2'],['d3'],['m1']].forEach(([k])=>{
+    const p=gv('biz-'+k+'-planned'), av=gv('biz-'+k+'-actual'), diff=p-av;
     const el=document.getElementById('biz-'+k+'-diff');
     if(el){ el.textContent=diff?diff.toLocaleString()+'원':'—'; el.style.color=diffColor(diff); }
   });
 
-  // M — 별도 표시 + 직접비에 포함
-  const mP=gv('biz-m1-planned'), mA=gv('biz-m1-actual');
-  const mDiff=mP-mA;
-  const mEl=document.getElementById('biz-m1-diff');
-  if(mEl){ mEl.textContent=mDiff?mDiff.toLocaleString()+'원':'—'; mEl.style.color=diffColor(mDiff); }
-
-  // 직접비 = C + M (마케팅 포함)
-  const directP = cP + mP;
+  // M 실행값
+  const mA=gv('biz-m1-actual');
+  // 직접비 = C + M (실행 기준)
   const directA = cA + mA;
 
-  // 손익 요약 — 실행 예산(actual) 기준
+  // 손익 요약 — 실행 예산 기준
   const pA=gv('biz-p1-actual')+gv('biz-p2-actual');
   const dA=gv('biz-d1-actual')+gv('biz-d2-actual')+gv('biz-d3-actual');
   const totalCostA=directA+pA+dA;
@@ -3267,7 +3276,7 @@ function calcBiz(){
 
   const sumEl=document.getElementById('biz-summary-area');
   if(sumEl) sumEl.innerHTML=`
-    <div class="biz-sum-item"><div class="bl">예상 매출</div><div class="bv">${aAct?aAct.toLocaleString()+'원':'—'}</div></div>
+    <div class="biz-sum-item"><div class="bl">총 매출 (A1+A2)</div><div class="bv">${aAct?aAct.toLocaleString()+'원':'—'}</div></div>
     <div class="biz-sum-item"><div class="bl">직접비(C+M) 합계</div><div class="bv">${directA?directA.toLocaleString()+'원':'—'}</div></div>
     <div class="biz-sum-item"><div class="bl">수익 (직접비 기준)</div><div class="bv ${profitDirA>=0?'pos':'neg'}">${aAct?profitDirA.toLocaleString()+'원':'—'}</div></div>
     <div class="biz-sum-item"><div class="bl">수익률 (직접비 C+M)</div><div class="bv ${rateDirA>=0?'pos':'neg'}">${aAct?rateDirA+'% '+(rateDirA>=25?'✅':'⚠️ 목표 25% 미달'):'—'}</div></div>
