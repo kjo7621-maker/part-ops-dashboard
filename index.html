@@ -1011,7 +1011,7 @@ tr:hover td{background:#FAFAF8}
     <div class="frow">
       <div class="fg"><label>업체명 / 성명</label>
         <div class="vendor-ac-wrap">
-          <input class="vendor-ac-input" id="ca-vendor" placeholder="업체명 또는 담당자 성명 검색..." oninput="vendorAC('ca')" autocomplete="off">
+          <input class="vendor-ac-input" id="ca-vendor" placeholder="업체명 또는 담당자 성명 검색..." oninput="vendorAC('ca')" onkeyup="vendorAC('ca')" autocomplete="off">
           <div class="vendor-ac-drop" id="ca-vendor-drop"></div>
         </div>
       </div>
@@ -2602,6 +2602,7 @@ function vendorAC(prefix){
   drop.style.top=(rect.bottom+4)+'px';
   drop.style.left=rect.left+'px';
   drop.style.width=rect.width+'px';
+  drop.style.display='block';
   drop.classList.add('open');
 }
 
