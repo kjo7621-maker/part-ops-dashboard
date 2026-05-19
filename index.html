@@ -408,7 +408,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v3.3.0 · 2026-05-19</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v3.4.0 · 2026-05-19</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -3620,8 +3620,8 @@ function renderSalesDash(){
   const cTop = Object.entries(clientMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
   mkChart('c-sales-client','bar',{
     labels:cTop.map(e=>e[0]),
-    datasets:[{data:cTop.map(e=>Math.round(e[1]/100000000*100)/100),backgroundColor:'#166534',borderRadius:3,barThickness:14}]
-  },{scales:{x:{grid:{color:'#F0F0EE'},ticks:{callback:v=>v+'억',font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}},indexAxis:'y'});
+    datasets:[{data:cTop.map(e=>Math.round(e[1]/100000000*100)/100),backgroundColor:'#166534',borderRadius:3,barThickness:24}]
+  },{scales:{x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30}},y:{grid:{color:'#F0F0EE'},ticks:{callback:v=>v+'억',font:{size:10}}}}});
 
   // 유형별 도넛
   const typeMap = {};
@@ -3677,7 +3677,10 @@ function renderSalesList(){
       <td style="text-align:right;font-size:12px;color:${rDir>=25?'var(--ok)':rDir>=15?'var(--text2)':'var(--danger)'}">${d.revenue?rDir+'%':'—'}</td>
       <td style="text-align:right;font-size:12px;color:${rInd>=0?'var(--text2)':'var(--danger)'}">${d.revenue?rInd+'%':'—'}</td>
       <td><span class="badge ${stCls}">${d.status||''}</span></td>
-
+      <td><div class="row-actions">
+        <button class="act-btn" onclick="openSalesEdit(${JSON.stringify(d.programName)},${d.year})">✏️</button>
+        <button class="act-btn danger" onclick="deleteSalesRow(${JSON.stringify(d.programName)},${d.year})">🗑</button>
+      </div></td>
     </tr>`;
   }).join('') : '<tr><td colspan="14" class="empty">데이터 없음</td></tr>';
 }
