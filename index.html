@@ -323,7 +323,7 @@ tr:hover td{background:#FAFAF8}
 .vendor-ac-wrap{position:relative;width:100%}
 .vendor-ac-input{width:100%;font-size:13px;padding:8px 12px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--text);font-family:inherit;outline:none;height:38px}
 .vendor-ac-input:focus{border-color:var(--black)}
-.vendor-ac-drop{position:absolute;top:40px;left:0;right:0;background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--r);box-shadow:var(--shadow-md);z-index:9999;max-height:200px;overflow-y:auto;display:none}
+.vendor-ac-drop{position:fixed;background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--r);box-shadow:var(--shadow-md);z-index:9999;max-height:200px;overflow-y:auto;display:none;min-width:200px}
 .vendor-ac-drop.open{display:block}
 .vendor-ac-item{padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:0.5px solid var(--border)}
 .vendor-ac-item:last-child{border-bottom:none}
@@ -957,7 +957,7 @@ tr:hover td{background:#FAFAF8}
     <div class="alert" id="msg-proj-add"></div>
     <div class="form-section-title">기본 정보</div>
     <div class="frow three">
-      <div class="fg"><label>광고주 세부명</label><input id="pa-client" placeholder="예: 넥슨코리아 FC 사업부"></div>
+      <div class="fg"><label>광고주 세부명</label><input id="pa-client" placeholder="예: FC 온라인"></div>
       <div class="fg"><label>광고주 분류 (기업명)</label><input id="pa-clientgroup" placeholder="예: 넥슨코리아"></div>
       <div class="fg"><label>프로젝트명</label><input id="pa-name" placeholder="예: 2026 FSL SPRING"></div>
     </div>
@@ -2598,10 +2598,12 @@ function vendorAC(prefix){
       <div class="name">${v['업체명']}</div>
       <div class="sub">${[v['담당자'],v['연락처']].filter(Boolean).join(' · ')}</div>
     </div>`).join('');
+  const rect=inp.getBoundingClientRect();
+  drop.style.top=(rect.bottom+4)+'px';
+  drop.style.left=rect.left+'px';
+  drop.style.width=rect.width+'px';
   drop.classList.add('open');
-}
-
-function selectVendorAC(prefix, name){
+}(prefix, name){
   const v = pmVendors.find(v=>v['업체명']===name);
   if(!v) return;
   const set = (id, val) => { const el=document.getElementById(id); if(el&&val) el.value=val; };
