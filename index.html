@@ -2603,7 +2603,9 @@ function vendorAC(prefix){
   drop.style.left=rect.left+'px';
   drop.style.width=rect.width+'px';
   drop.classList.add('open');
-}(prefix, name){
+}
+
+function selectVendorAC(prefix, name){
   const v = pmVendors.find(v=>v['업체명']===name);
   if(!v) return;
   const set = (id, val) => { const el=document.getElementById(id); if(el&&val) el.value=val; };
