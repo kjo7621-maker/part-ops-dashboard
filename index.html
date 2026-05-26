@@ -408,7 +408,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v3.5.0 · 2026-05-19</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v3.6.0 · 2026-05-26</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -1198,19 +1198,19 @@ tr:hover td{background:#FAFAF8}
       <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:4px">수익률(간접)</div><div style="font-size:15px;font-weight:700" id="sa-rate-ind">—</div></div>
     </div>
     <div class="form-section-title">월별 매출 인식 (원)</div>
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px">
-      <div class="fg"><label>1월</label><input type="number" id="sa-m1" placeholder="0"></div>
-      <div class="fg"><label>2월</label><input type="number" id="sa-m2" placeholder="0"></div>
-      <div class="fg"><label>3월</label><input type="number" id="sa-m3" placeholder="0"></div>
-      <div class="fg"><label>4월</label><input type="number" id="sa-m4" placeholder="0"></div>
-      <div class="fg"><label>5월</label><input type="number" id="sa-m5" placeholder="0"></div>
-      <div class="fg"><label>6월</label><input type="number" id="sa-m6" placeholder="0"></div>
-      <div class="fg"><label>7월</label><input type="number" id="sa-m7" placeholder="0"></div>
-      <div class="fg"><label>8월</label><input type="number" id="sa-m8" placeholder="0"></div>
-      <div class="fg"><label>9월</label><input type="number" id="sa-m9" placeholder="0"></div>
-      <div class="fg"><label>10월</label><input type="number" id="sa-m10" placeholder="0"></div>
-      <div class="fg"><label>11월</label><input type="number" id="sa-m11" placeholder="0"></div>
-      <div class="fg"><label>12월</label><input type="number" id="sa-m12" placeholder="0"></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+      <div class="fg"><label style="font-size:11px">1월</label><input type="number" id="sa-m1" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">2월</label><input type="number" id="sa-m2" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">3월</label><input type="number" id="sa-m3" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">4월</label><input type="number" id="sa-m4" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">5월</label><input type="number" id="sa-m5" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">6월</label><input type="number" id="sa-m6" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">7월</label><input type="number" id="sa-m7" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">8월</label><input type="number" id="sa-m8" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">9월</label><input type="number" id="sa-m9" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">10월</label><input type="number" id="sa-m10" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">11월</label><input type="number" id="sa-m11" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">12월</label><input type="number" id="sa-m12" placeholder="0" style="font-size:12px;padding:6px 8px"></div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:14px;border-top:0.5px solid var(--border)">
       <button class="btn btn-sec" onclick="resetSalesForm()">초기화</button>
@@ -3676,19 +3676,19 @@ function deleteSalesRow(programName, year){
       <div><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px">수익률(간접)</div><div style="font-size:14px;font-weight:700" id="se-rate-ind">—</div></div>
     </div>
     <div class="form-section-title">월별 매출 인식</div>
-    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px">
-      <div class="fg"><label>1월</label><input type="number" id="se-m1"></div>
-      <div class="fg"><label>2월</label><input type="number" id="se-m2"></div>
-      <div class="fg"><label>3월</label><input type="number" id="se-m3"></div>
-      <div class="fg"><label>4월</label><input type="number" id="se-m4"></div>
-      <div class="fg"><label>5월</label><input type="number" id="se-m5"></div>
-      <div class="fg"><label>6월</label><input type="number" id="se-m6"></div>
-      <div class="fg"><label>7월</label><input type="number" id="se-m7"></div>
-      <div class="fg"><label>8월</label><input type="number" id="se-m8"></div>
-      <div class="fg"><label>9월</label><input type="number" id="se-m9"></div>
-      <div class="fg"><label>10월</label><input type="number" id="se-m10"></div>
-      <div class="fg"><label>11월</label><input type="number" id="se-m11"></div>
-      <div class="fg"><label>12월</label><input type="number" id="se-m12"></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+      <div class="fg"><label style="font-size:11px">1월</label><input type="number" id="se-m1" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">2월</label><input type="number" id="se-m2" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">3월</label><input type="number" id="se-m3" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">4월</label><input type="number" id="se-m4" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">5월</label><input type="number" id="se-m5" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">6월</label><input type="number" id="se-m6" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">7월</label><input type="number" id="se-m7" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">8월</label><input type="number" id="se-m8" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">9월</label><input type="number" id="se-m9" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">10월</label><input type="number" id="se-m10" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">11월</label><input type="number" id="se-m11" style="font-size:12px;padding:6px 8px"></div>
+      <div class="fg"><label style="font-size:11px">12월</label><input type="number" id="se-m12" style="font-size:12px;padding:6px 8px"></div>
     </div>
     <div class="btn-row">
       <button class="btn btn-sec" onclick="document.getElementById('sales-edit-modal').classList.remove('open')">취소</button>
