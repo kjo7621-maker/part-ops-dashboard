@@ -1321,7 +1321,7 @@ async function loadAll(){
       renderMemberCards();renderMemberCharts();
       renderLeaveCards();renderLeaveDetail();renderCal();renderOfficialList();
     }else setDot('err','오류');
-  }catch(e){setDot('err','오류');}
+  }catch(e){setDot('err','오류');console.error('loadAll 오류:', e);}
 }
 
 function bal(m,type){return leaves.filter(l=>l['담당자']===m&&l['종류']===type).reduce((a,l)=>a+(parseFloat(l['일(D)'])||0),0);}
