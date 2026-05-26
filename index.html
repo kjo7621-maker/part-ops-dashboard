@@ -3333,6 +3333,8 @@ function renderSalesList(){
   filteredSalesList = list;
   document.getElementById('sales-count').textContent = list.length;
 
+  const tbody = document.getElementById('sales-list-tbody');
+  if(!tbody) return;
   tbody.innerHTML = list.length ? list.map((d,idx)=>{
     const rDir = d.revenue ? Math.round((d.revenue-d.directCost)/d.revenue*100) : 0;
     const rInd = d.revenue ? Math.round((d.revenue-d.indirectTotal)/d.revenue*100) : 0;
