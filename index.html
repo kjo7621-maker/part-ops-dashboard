@@ -408,7 +408,7 @@ tr:hover td{background:#FAFAF8}
   <div class="logo-area">
     <div class="logo-brand">파트 운영</div>
     <div class="logo-sub">Operations Dashboard 2026</div>
-    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v3.6.0 · 2026-05-26</div>
+    <div class="logo-sub" style="margin-top:4px;opacity:.4;font-size:9px;letter-spacing:.06em">v3.7.0 · 2026-05-26</div>
   </div>
   <nav class="nav">
     <div class="nav-sec">조회</div>
@@ -3514,6 +3514,18 @@ function showMemberManager(){
 // ── 매출 수정/삭제/추가 ────────────────────────────────────
 function openSalesAdd(){
   showPage('sales-add', document.querySelector('.nav-btn[onclick*="sales-add"]'));
+}
+
+function openSalesEditByIdx(idx){
+  const d = filteredSalesList[idx];
+  if(!d){ alert('데이터를 찾을 수 없습니다'); return; }
+  openSalesEdit(d.programName, d.year);
+}
+
+function deleteSalesRowByIdx(idx){
+  const d = filteredSalesList[idx];
+  if(!d) return;
+  deleteSalesRow(d.programName, d.year);
 }
 
 function openSalesEdit(programName, year){
