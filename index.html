@@ -319,6 +319,13 @@ textarea{resize:vertical}
 .tpl-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px} .tpl-grid .field{margin-bottom:8px}
 .offset{display:flex;gap:4px;align-items:center} .offset select{width:auto;flex:none;padding:10px 6px} .offset input{min-width:0} .offset span{color:var(--muted);font-size:12.5px}
 /* 주간보고 */
+.rep-tbl{border-collapse:collapse;font-size:12.5px;min-width:920px;width:100%}
+.rep-tbl td,.rep-tbl th{border:1px solid var(--line);padding:8px 10px;vertical-align:top;white-space:pre-wrap;word-break:keep-all;line-height:1.55;text-align:left}
+.rep-tbl th{background:#F2F4F6;font-weight:700;color:var(--sub);white-space:nowrap}
+.rep-tbl .rep-date td{background:#FFF9DB;font-weight:700}
+.rep-tbl td.c-who{min-width:120px} .rep-tbl td.c-name{min-width:120px;font-weight:600} .rep-tbl td.c-ov{min-width:230px} .rep-tbl td.c-work{min-width:260px} .rep-tbl td.c-chk{min-width:140px}
+.rep-opts{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px} .rep-opts .field{margin:0} .rep-opts input[type=date]{width:auto}
+.cal-ok{color:var(--green);font-weight:600} .cal-no{color:var(--red);font-weight:600}
 .rep-out{font-family:inherit;line-height:1.7;font-size:13.5px;background:#FAFBFC;resize:vertical;min-height:320px}
 
 @media(max-width:960px){.grid2,.grid21{grid-template-columns:1fr}}
@@ -372,7 +379,7 @@ const S = {
   projScope: 'mine', projStage: 'active', projTab: 'overview', projShowDone: false, projectId: null, draft: null,
   chat: {pid: null, msgs: [], since: '', count: 0, loaded: false}, chatDraft: '', chatTimer: null,
   libF: {q:'', source:'', cat:'', project:'', kind:''}, libMode: 'link', libFile: null, ctF: {q:'', company:'', project:''},
-  tpl: null, tplApply: null, tplProject: '', repWeek: 0, repMode: 'person', repScope: 'mine',
+  tpl: null, tplApply: null, tplProject: '', repWeek: 0, repMode: 'team', repScope: 'mine', repTeamScope: '', repDates: {}, repHead: true,
   salesYear: now0.getFullYear(), salesFilter: {stage:'', owner:'', type:'', q:''}
 };
 
@@ -398,6 +405,7 @@ const wonShort = n => {
 const fmtDay = n => String(r2(num(n)));
 const DOW = '일월화수목금토';
 const fmtMD = s => { const d = pd(s); return `${d.getMonth()+1}.${d.getDate()} (${DOW[d.getDay()]})`; };
+const isDate = s => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''));
 const isTrue = v => v === true || String(v).toUpperCase() === 'TRUE';
 const isLeader = () => !!(S.data && S.data.me.role === 'leader');
 const member = id => (S.data.members || []).find(m => m.id === id) || {id, nickname:'(알 수 없음)'};
@@ -406,7 +414,9 @@ const dday = due => { const n = diffD(today(), due); return n === 0 ? 'D-Day' : 
 const PRI_CLS = {'높음':'hi','보통':'md','낮음':'lo'};
 const ST_CLS = {'할 일':'todo','진행 중':'doing','보류':'hold','완료':'done'};
 const STAGE_CLS = {'제안중':'a','협상중':'b','수주확정':'c','진행중':'d','완료':'e','실주':'f'};
-const KIND = {leave:'휴가', task:'마감', ms:'마일스톤', league:'리그', event:'공유 일정'};
+const KIND = {leave:'휴가', task:'마감', ms:'마일스톤', league:'리그', event:'업무 캘린더'};
+const teamCalName = () => (S.data && S.data.settings.calendarName) || '업무 캘린더';
+const leaveCalName = () => (S.data && S.data.settings.leaveCalendarName) || '';
 const EFFORTS = [0.5, 1, 2, 3, 5, 10];
 const PALETTE = ['#3182F6','#7048E8','#0CA678','#F08C00','#E64980','#1098AD','#5C7CFA','#D9480F'];
 
@@ -849,7 +859,7 @@ function taskPanel(x, preset={}){
   const collab = collabOf(x);
   const collabHtml = activeMembers().filter(m => m.id !== assignee || collab.includes(m.id))
     .map(m => `<label class="chipck"><input type="checkbox" name="collaborators" value="${m.id}" ${collab.includes(m.id) ? 'checked' : ''} ${dis}>${esc(m.nickname)}</label>`).join('');
-  const onCal = x.id ? isTrue(x.onCalendar) : true, eff = num(x.effort || 1);
+  const onCal = x.id ? isTrue(x.onCalendar) : false, eff = num(x.effort || 1);
   return `${mHead(isNew ? (preset.fromChat ? '채팅 메시지로 업무 등록' : '업무 추가') : esc(x.title))}
   <form data-form="task" id="taskForm"><input type="hidden" name="id" value="${esc(x.id || '')}">${preset.fromChat ? `<input type="hidden" name="fromChat" value="${esc(preset.fromChat)}">` : ''}
     <div class="field"><label for="tTitle">업무명 *</label><input id="tTitle" name="title" value="${v('title')}" required maxlength="120" ${dis}></div>
@@ -862,7 +872,7 @@ function taskPanel(x, preset={}){
       <div class="field"><label>마감일</label><input type="date" name="dueDate" value="${v('dueDate')}" ${dis}></div></div>
     <div class="field"><label>태그</label><input name="tags" value="${esc(tagsOf(x).join(', '))}" placeholder="쉼표로 구분 (예: 정산, 방송, 계약)" list="dlTags" ${dis}><datalist id="dlTags">${allTags().map(g => `<option value="${esc(g)}">`).join('')}</datalist></div>
     <div class="field"><label>설명</label><textarea name="desc" rows="3" placeholder="배경, 목표, 참고 사항" ${dis}>${v('desc')}</textarea></div>
-    <label class="check"><input type="checkbox" name="onCalendar" ${onCal ? 'checked' : ''} ${dis}> 마감일을 파트 공유 캘린더에 표시</label>
+    <label class="check"><input type="checkbox" name="onCalendar" ${onCal ? 'checked' : ''} ${dis}> 마감일을 ${esc(teamCalName())} 캘린더에 표시</label>
   </form>
   <section class="sec"><h4>체크리스트 <span class="muted" id="ckCount"></span></h4><div id="ckBox"></div></section>
   <section class="sec"><h4>관련 링크·자료</h4><div id="lnBox"></div></section>
@@ -1208,7 +1218,7 @@ function tplApplyHtml(t){
     <div class="row2"><div class="field"><label for="tplBase">${esc(t.baseLabel)} *</label><input type="date" id="tplBase" name="baseDate" value="${base}" required></div>
       <div class="field"><label>프로젝트</label><select name="projectId"><option value="">없음</option>${S.data.projects.filter(x => x.stage !== '실주' && x.stage !== '완료' || x.id === pid).map(x => `<option value="${x.id}" ${x.id === pid ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div></div>
     <label class="check"><input type="checkbox" id="tplShift" checked> 마감일이 주말·공휴일이면 직전 근무일로 당기기</label>
-    <label class="check"><input type="checkbox" name="onCalendar"> 마감일을 파트 공유 캘린더에 표시</label>
+    <label class="check"><input type="checkbox" name="onCalendar"> 마감일을 ${esc(teamCalName())} 캘린더에 표시</label>
     <div class="tbl-wrap mt"><table class="tbl"><thead><tr><th></th><th>업무</th><th>기간</th><th>담당</th></tr></thead><tbody id="tplRows">${tplApplyRows()}</tbody></table></div>
     ${isLeader() ? '' : '<p class="hint">파트원은 본인 담당으로만 만들 수 있습니다. 다른 사람에게 배정하려면 파트장에게 요청하세요.</p>'}</form>
     <div class="m-foot"><button class="btn" data-act="tplBack">목록</button><span class="sp"></span><button type="submit" form="tplApplyForm" class="btn primary" id="tplApplyBtn">업무 ${items.length}개 만들기</button></div>`;
@@ -1270,21 +1280,120 @@ function buildReport(R, mode, ids, note){
   return {text: lines.join('\n'), c};
 }
 
+/* 팀 주간 업무보고 (2026_New 탭): 담당자 | 프로젝트 (명칭) | 개요 및 매출/수익률 | (금주) 주요 추진 업무 | 주요 체크사항 | ETA | STATUS */
+const REP_COLS = ['담당자', '프로젝트 (명칭)', '개요 및 매출/수익률', '(금주) 주요 추진 업무', '주요 체크사항', 'ETA', 'STATUS'];
+const dShort = s => `${+s.slice(5, 7)}/${+s.slice(8, 10)}(${DOW[pd(s).getDay()]})`;
+const dLong = s => `${s.slice(0, 4)}.${s.slice(5, 7)}.${s.slice(8, 10)}(${DOW[pd(s).getDay()]})`;
+const repTeamScope = () => S.repTeamScope || (isLeader() ? 'all' : 'mine');
+const repDateOf = R => S.repDates[R.from] || addD(R.from, 3);
+
+function projOverview(p){
+  const lines = ['[개요]'], sch = String(p.schedule || '').trim();
+  if (sch.includes('\n')) lines.push(...sch.split('\n'));
+  else lines.push(`- 일정 : ${sch || (p.startDate && p.endDate ? `${dLong(p.startDate)} ~ ${dLong(p.endDate)}` : '미정')}`);
+  if (p.venue) lines.push(`- 장소 : ${p.venue}`);
+  const r = num(p.revenue), m = r ? Math.round((r - num(p.directCost)) / r * 100) : null;
+  lines.push('', '[매출 / 수익률]', `- 매출 : ${r ? won(r) : '미정'}`, `- 수익률 : ${m == null ? '미정' : m + '%' + (p.stage === '완료' ? '' : ' 예상')}`);
+  return lines.join('\n');
+}
+
+function buildTeamReport(R, scope){
+  const d = S.data, t = today(), me = d.me.id, inR = s => !!s && s >= R.from && s <= R.to;
+  const roster = activeMembers().map(m => m.id), ord = id => { const i = roster.indexOf(id); return i < 0 ? 99 : i; };
+  let ps = d.projects.filter(p => p.stage !== '실주');
+  if (scope === 'mine') ps = ps.filter(p => p.ownerId === me || d.tasks.some(x => x.projectId === p.id && (x.assigneeId === me || collabOf(x).includes(me))));
+  const rows = [], skipped = [];
+  ps.slice().sort((a, b) => (a.startDate || '').localeCompare(b.startDate || '')).forEach(p => {
+    const ts = d.tasks.filter(x => x.projectId === p.id);
+    const done = ts.filter(x => x.status === '완료' && inR(String(x.completedAt || '').slice(0, 10)));
+    const doing = ts.filter(x => x.status === '진행 중');
+    const todo = ts.filter(x => x.status === '할 일' && !(x.dueDate && x.dueDate < R.from) && ((x.dueDate && x.dueDate <= R.to) || (x.startDate && x.startDate <= R.to)));
+    const ms = (d.milestones || []).filter(m => m.projectId === p.id).sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+    const items = [];
+    done.concat(doing, todo).forEach(x => {
+      const dt = inR(x.dueDate) ? x.dueDate : (x.status === '할 일' && inR(x.startDate)) ? x.startDate : '';
+      let line = `- ${dt ? dShort(dt) + ' ' : ''}${x.title}`;
+      if (x.status === '완료') line += ' (완료)';
+      else if (!dt && x.dueDate && x.dueDate > R.to) line += ` (~${+x.dueDate.slice(5, 7)}/${+x.dueDate.slice(8, 10)})`;
+      items.push({k: (dt || '9999') + (x.status === '완료' ? '0' : '1'), line});
+    });
+    ms.filter(m => inR(m.dueDate)).forEach(m => items.push({k: m.dueDate + '0', line: `- ${dShort(m.dueDate)} ${m.title}${isTrue(m.done) ? ' (완료)' : ''}`}));
+    items.sort((a, b) => a.k.localeCompare(b.k));
+    const work = [...new Set(items.map(i => i.line))];
+    const checks = ms.filter(m => !isTrue(m.done) && m.dueDate > R.to).slice(0, 2).map(m => `${dShort(m.dueDate)} ${m.title}`);
+    const late = ts.filter(x => x.status !== '완료' && x.dueDate && x.dueDate < t).map(x => `지연: ${x.title} (${+x.dueDate.slice(5, 7)}/${+x.dueDate.slice(8, 10)} 마감)`);
+    const hold = ts.filter(x => x.status === '보류').map(x => `보류: ${x.title}`);
+    if (!work.length && !late.length && !hold.length) { if (p.stage !== '완료') skipped.push(p.name); return; }
+    const who = new Set([p.ownerId]);
+    done.concat(doing, todo).forEach(x => { who.add(x.assigneeId); collabOf(x).forEach(id => who.add(id)); });
+    const names = [...who].filter(id => roster.includes(id)).sort((a, b) => ord(a) - ord(b)).map(id => member(id).nickname);
+    rows.push([names.join(', '), p.name, projOverview(p), work.join('\n'), checks.concat(late, hold).join('\n'), '', '']);
+  });
+  return {rows, skipped};
+}
+
+function teamReportGrid(R, rep){
+  const all = (S.repHead ? [[repDateOf(R).slice(2).replace(/-/g, '.'), '', '', '', '', '', ''], REP_COLS] : []).concat(rep.rows);
+  return all;
+}
+
+function teamReportHtml(R, rep){
+  const cls = ['c-who', 'c-name', 'c-ov', 'c-work', 'c-chk', '', ''];
+  const head = S.repHead ? `<tr class="rep-date"><td colspan="7">${esc(repDateOf(R).slice(2).replace(/-/g, '.'))}</td></tr><tr>${REP_COLS.map(c => `<th>${c}</th>`).join('')}</tr>` : `<tr>${REP_COLS.map(c => `<th>${c}</th>`).join('')}</tr>`;
+  return `<div class="tbl-wrap"><table class="rep-tbl" id="repTable">${head}${rep.rows.map(r => `<tr>${r.map((c, i) => `<td class="${cls[i]}">${esc(c)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+}
+
+async function copyGrid(grid, msg){
+  const html = '<meta charset="utf-8"><table>' + grid.map(r => '<tr>' + r.map(c => `<td>${esc(c).replace(/\n/g, '<br>')}</td>`).join('') + '</tr>').join('') + '</table>';
+  const tsv = grid.map(r => r.map(c => /[\t\n"]/.test(c) ? '"' + String(c).replace(/"/g, '""') + '"' : c).join('\t')).join('\n');
+  try {
+    if (navigator.clipboard && window.ClipboardItem) {
+      await navigator.clipboard.write([new ClipboardItem({'text/html': new Blob([html], {type: 'text/html'}), 'text/plain': new Blob([tsv], {type: 'text/plain'})})]);
+      return toast(msg);
+    }
+  } catch (e) {}
+  const div = document.createElement('div');
+  div.innerHTML = html; div.style.cssText = 'position:fixed;left:-9999px;top:0';
+  document.body.appendChild(div);
+  const range = document.createRange(), sel = window.getSelection();
+  range.selectNodeContents(div); sel.removeAllRanges(); sel.addRange(range);
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) {}
+  sel.removeAllRanges(); div.remove();
+  toast(ok ? msg : '복사하지 못했습니다. 표를 직접 드래그해서 복사해 주세요', ok ? '' : 'err');
+}
+
 function repIds(){ return isLeader() && S.repScope === 'all' ? activeMembers().map(m => m.id) : [S.data.me.id]; }
 const repNoteKey = R => `pw_rep_${S.data.me.id}_${R.from}`;
 
 function viewReport(){
-  const R = weekRange(S.repWeek), note = LS.get(repNoteKey(R)) || '';
-  const rep = buildReport(R, S.repMode, repIds(), note);
+  const R = weekRange(S.repWeek);
   const label = S.repWeek === 0 ? '이번 주' : S.repWeek === -1 ? '지난주' : S.repWeek === 1 ? '다음 주' : `${S.repWeek > 0 ? '+' : ''}${S.repWeek}주`;
+  const nav = `<div class="yearsel"><button class="icon-btn" data-act="repWeek" data-dir="-1" aria-label="이전 주">${icon('left')}</button><b>${label}</b><button class="icon-btn" data-act="repWeek" data-dir="1" aria-label="다음 주">${icon('right')}</button></div>${S.repWeek ? '<button class="btn" data-act="repToday">이번 주</button>' : ''}${S.data.settings.reportSheetUrl ? `<a class="btn" href="${esc(S.data.settings.reportSheetUrl)}" target="_blank" rel="noopener">보고 시트 열기</a>` : ''}`;
+  const modes = `<div class="seg">${seg('repMode', 'team', '팀 양식 (2026_New)')}${seg('repMode', 'person', '사람별 텍스트')}${seg('repMode', 'project', '프로젝트별 텍스트')}</div>`;
+  if (S.repMode === 'team') {
+    const scope = repTeamScope(), rep = buildTeamReport(R, scope);
+    S._teamRep = rep;
+    return `${pageHead('주간보고', nav, `${fmtMD(R.from)} ~ ${fmtMD(R.fri)}`)}
+      <div class="toolbar">${modes}<div class="seg"><button class="${scope === 'mine' ? 'on' : ''}" data-act="repTeamScope" data-val="mine">내 프로젝트</button><button class="${scope === 'all' ? 'on' : ''}" data-act="repTeamScope" data-val="all">파트 전체</button></div></div>
+      <div class="card"><div class="rep-opts"><div class="field"><label for="repDate">보고일 (블록 맨 위 날짜)</label><input type="date" id="repDate" data-repdate value="${repDateOf(R)}"></div>
+        <label class="check" style="margin:18px 0 0"><input type="checkbox" data-rephead ${S.repHead ? 'checked' : ''}> 날짜·제목 행 포함</label><span class="sp"></span>
+        <button class="btn primary" data-act="repTableCopy" style="margin-top:18px">${icon('copy')}표 복사 (${rep.rows.length}개 프로젝트)</button></div>
+        ${rep.rows.length ? teamReportHtml(R, rep) : '<p class="empty">이번 주에 정리할 프로젝트 업무가 없습니다.</p>'}
+        ${rep.skipped.length ? `<p class="hint">이번 주 업무가 없어 빠진 프로젝트: ${rep.skipped.map(esc).join(', ')}</p>` : ''}</div>
+      <div class="grid2 mt"><div class="card"><h3>붙여넣는 방법</h3><p class="hint">1. '보고 시트 열기' → 2026_New 탭<br>2. 지난주 블록 위에 빈 행을 넉넉히 넣고, A열 첫 칸 클릭<br>3. Ctrl+V. 칸 안 줄바꿈까지 그대로 들어갑니다.<br>4. 글꼴·테두리가 다르면 Ctrl+Shift+V(값만 붙여넣기) 후 지난주 블록 서식을 복사해 쓰세요.</p></div>
+        <div class="card"><h3>작성 기준</h3><p class="hint">개요: 프로젝트의 일정·장소·매출·직접비 기준 수익률 (완료 전엔 '예상')<br>(금주) 주요 추진 업무: 이번 주 완료한 업무, 진행 중 업무, 이번 주까지 시작·마감인 할 일, 이번 주 마일스톤<br>주요 체크사항: 다음 마일스톤 2개, 지연·보류 업무<br>ETA·STATUS: 기존 시트처럼 비워 둡니다.<br>장소와 일정은 프로젝트 수정 화면에서 넣을 수 있습니다.</p></div></div>`;
+  }
+  const note = LS.get(repNoteKey(R)) || '';
+  const rep = buildReport(R, S.repMode, repIds(), note);
   const rows = Math.min(60, Math.max(16, rep.text.split('\n').length + 2));
-  return `${pageHead('주간보고', `<div class="yearsel"><button class="icon-btn" data-act="repWeek" data-dir="-1" aria-label="이전 주">${icon('left')}</button><b>${label}</b><button class="icon-btn" data-act="repWeek" data-dir="1" aria-label="다음 주">${icon('right')}</button></div>${S.repWeek ? '<button class="btn" data-act="repToday">이번 주</button>' : ''}`, `${fmtMD(R.from)} ~ ${fmtMD(R.fri)}`)}
-    <div class="toolbar"><div class="seg">${seg('repMode', 'person', '사람별')}${seg('repMode', 'project', '프로젝트별')}</div>${isLeader() ? `<div class="seg">${seg('repScope', 'mine', '내 보고')}${seg('repScope', 'all', '파트 전체')}</div>` : ''}</div>
+  return `${pageHead('주간보고', nav, `${fmtMD(R.from)} ~ ${fmtMD(R.fri)}`)}
+    <div class="toolbar">${modes}${isLeader() ? `<div class="seg">${seg('repScope', 'mine', '내 보고')}${seg('repScope', 'all', '파트 전체')}</div>` : ''}</div>
     <div class="kpis">${kpi('완료', rep.c.done + '건', '이번 주에 완료 처리')}${kpi('진행', rep.c.doing + '건', '진행 중 상태')}${kpi('예정', rep.c.next + '건', `다음 주 금요일(${fmtMD(R.nFri)})까지`)}${kpi('지연', rep.c.late + '건', '마감이 지난 미완료', rep.c.late ? 'warn' : '')}</div>
     <div class="grid21 mt"><div class="card"><div class="card-h"><h3>보고 내용</h3><button class="btn sm primary" data-act="repCopy">${icon('copy')}텍스트 복사</button></div>
       <textarea id="repOut" class="rep-out" rows="${rows}" readonly aria-label="주간보고 내용">${esc(rep.text)}</textarea></div>
       <div><div class="card"><div class="card-h"><h3>기타 공유사항</h3></div><textarea data-repnote rows="7" placeholder="업무로 등록하지 않은 공유 사항을 줄마다 적어 주세요. 이 브라우저에 임시 저장됩니다.">${esc(note)}</textarea></div>
-        <div class="card mt"><h3>작성 기준</h3><p class="hint">완료: 해당 주에 완료 처리된 업무<br>진행: 지금 '진행 중'인 업무와 체크리스트 진행률<br>예정: '할 일' 중 다음 주 금요일까지 시작하거나 마감인 업무<br>이슈: 마감이 지났거나 보류된 업무<br>부재: 해당 주와 다음 주 휴가<br><br>진행·예정·이슈는 지금 상태 기준이라, 지난주를 보면 그때와 다를 수 있습니다. 그룹웨어 본문 폭에 맞춰 짧은 줄로 만듭니다.</p></div></div></div>`;
+        <div class="card mt"><h3>작성 기준</h3><p class="hint">완료: 해당 주에 완료 처리된 업무<br>진행: 지금 '진행 중'인 업무와 체크리스트 진행률<br>예정: '할 일' 중 다음 주 금요일까지 시작하거나 마감인 업무<br>이슈: 마감이 지났거나 보류된 업무<br>부재: 해당 주와 다음 주 휴가<br><br>진행·예정·이슈는 지금 상태 기준이라, 지난주를 보면 그때와 다를 수 있습니다.</p></div></div></div>`;
 }
 
 /* ─── 프로젝트 채팅 ─── */
@@ -1536,14 +1645,24 @@ function leaveForm(p={}){
     <div class="field"><label>휴가 유형</label><select name="type">${types}</select></div>
     <div class="row2"><div class="field"><label>시작일</label><input type="date" name="startDate" value="${date}" required></div>
       <div class="field" id="endWrap"><label>종료일</label><input type="date" name="endDate" value="${date}"></div></div>
+    <div class="field" id="compWrap" hidden><label>사용할 대휴 (근무일)</label><select name="compDate"></select><small class="hint">캘린더 제목에 '대체휴무 (근무일)'로 표시됩니다. 여러 날이면 오래된 근무일부터 차감합니다.</small></div>
     <div class="field"><label>사유 (선택)</label><input name="reason" maxlength="100" placeholder="본인과 파트장만 볼 수 있어요"></div>
     <div class="preview" id="leavePreview"></div>
-    <p class="hint">승인 없이 바로 확정되고, 파트 공유 캘린더에 자동으로 등록됩니다.</p>
+    <p class="hint">승인 없이 바로 확정되고, ${esc(leaveCalName() || '본부 휴가 캘린더')}에 자동으로 등록됩니다.</p>
     <div class="m-foot"><span class="sp"></span><button type="button" class="btn" data-act="closeModal">취소</button><button class="btn primary">등록</button></div></form>`;
 }
 
+const LEAVE_CAL_LABEL = {'연차':'연차', '오전반차':'오전반차', '오후반차':'오후반차', '반반차':'반반차', '대휴':'대체휴무', '대휴 반차':'대체휴무 반차', '병가':'병가', '경조휴가':'경조휴가', '공가':'공가'};
+const leaveCalTitle = (m, type, dates) => `[${(m.calName || m.nickname || '').trim()}] ${LEAVE_CAL_LABEL[type] || type}${dates.length ? ` (${dates.map(s => `${+s.slice(5, 7)}/${+s.slice(8, 10)}`).join(', ')})` : ''}`;
+function pickCompClient(records, days, preferred){
+  const order = records.filter(r => num(r.remain) > 0).slice().sort((a, b) => (a.workDate === preferred ? 0 : 1) - (b.workDate === preferred ? 0 : 1));
+  const out = []; let need = days;
+  order.forEach(r => { if (need <= 0) return; need = r2(need - Math.min(num(r.remain), need)); if (!out.includes(r.workDate)) out.push(r.workDate); });
+  return out;
+}
+
 function updateLeavePreview(f){
-  const types = S.data.meta.leaveTypes, t = types[f.elements['type'].value];
+  const types = S.data.meta.leaveTypes, type = f.elements['type'].value, t = types[type];
   if (!t) return;
   f.querySelector('#endWrap').style.visibility = t.range ? 'visible' : 'hidden';
   const s = f.elements['startDate'].value, endEl = f.elements['endDate'];
@@ -1553,9 +1672,21 @@ function updateLeavePreview(f){
   const days = !s ? 0 : t.range ? workdaysBetween(s, e) : (isWorkday(s) ? t.days : 0);
   const mid = f.elements['memberId'] ? f.elements['memberId'].value : S.data.me.id;
   const b = S.data.balances.find(x => x.memberId === mid);
+  const recs = (b && b.comp.records) || [];
+  const wrap = f.querySelector('#compWrap'), sel = f.elements['compDate'];
+  wrap.hidden = t.deduct !== 'comp';
+  if (sel.dataset.mid !== mid) {
+    sel.dataset.mid = mid;
+    sel.innerHTML = recs.length ? recs.map(r => `<option value="${r.workDate}">${fmtMD(r.workDate)} 근무분 · 남은 ${fmtDay(r.remain)}일${r.reason ? ' · ' + esc(r.reason) : ''}</option>`).join('') : '<option value="">남은 대휴가 없습니다</option>';
+  }
   const remain = !b ? '' : t.deduct === 'annual' ? ` · 잔여 연차 ${fmtDay(b.annual.remain)}일` : t.deduct === 'comp' ? ` · 잔여 대휴 ${fmtDay(b.comp.remain)}일` : '';
   const deduct = t.deduct === 'annual' ? '연차 차감' : t.deduct === 'comp' ? '대휴 차감' : '차감 없음';
-  f.querySelector('#leavePreview').innerHTML = s ? (days ? `<b>${fmtDay(days)}일</b> · ${deduct}${remain} <span class="muted">(주말·공휴일 제외)</span>` : '선택한 날짜는 근무일이 아닙니다.') : '';
+  let calLine = '';
+  if (s && days) {
+    if (!leaveCalName()) calLine = '<br><span class="muted">휴가 캘린더가 연결되어 있지 않아 캘린더에는 올라가지 않습니다.</span>';
+    else calLine = `<br>${esc(leaveCalName())}에 <b>${esc(leaveCalTitle(member(mid), type, t.deduct === 'comp' ? pickCompClient(recs, days, sel.value) : []))}</b>로 등록`;
+  }
+  f.querySelector('#leavePreview').innerHTML = s ? (days ? `<b>${fmtDay(days)}일</b> · ${deduct}${remain} <span class="muted">(주말·공휴일 제외)</span>${calLine}` : '선택한 날짜는 근무일이 아닙니다.') : '';
 }
 
 function compForm(){
@@ -1595,9 +1726,16 @@ function buildCalMap(from, to, events){
     const p = S.data.projects.find(x => x.id === m.projectId);
     push(m.dueDate, {kind:'ms', title: m.title, sub: p ? p.name : '', done: isTrue(m.done)});
   });
+  const tags = activeMembers().flatMap(m => [m.nickname, m.calName].filter(Boolean).map(n => '[' + n.trim() + ']'));
   (events || []).forEach(ev => {
     if (ev.source === 'holiday') { eachDay(ev.start, ev.end, d => S._holExtra[d] = ev.title); return; }
     if (ids.has(ev.id)) return;
+    if (ev.source === 'leavecal') {
+      const t = String(ev.title).trim();
+      if (!tags.some(g => t.indexOf(g) === 0)) return;
+      eachDay(ev.start > from ? ev.start : from, ev.end < to ? ev.end : to, d => { if (ev.start === ev.end || isWorkday(d)) push(d, {kind: 'leave', title: t.replace(/^\[([^\]]+)\]\s*/, '$1 '), sub: leaveCalName()}); });
+      return;
+    }
     eachDay(ev.start > from ? ev.start : from, ev.end < to ? ev.end : to, d => push(d, {kind: ev.source === 'league' ? 'league' : 'event', title: (ev.time ? ev.time + ' ' : '') + ev.title}));
   });
   return map;
@@ -1616,10 +1754,10 @@ function viewCalendar(){
   }
   return `${pageHead('캘린더', `<div class="yearsel"><button class="icon-btn" data-act="calMove" data-dir="-1">${icon('left')}</button><b>${y}년 ${m+1}월</b><button class="icon-btn" data-act="calMove" data-dir="1">${icon('right')}</button></div>
       <button class="btn" data-act="calToday">오늘</button><a class="btn" href="https://calendar.google.com/calendar/r" target="_blank" rel="noopener">구글 캘린더 열기</a>`)}
-    <div class="legend">${Object.entries(KIND).map(([k, v]) => `<span><i class="kdot k-${k}"></i>${v}</span>`).join('')}<span><i class="kdot" style="background:var(--red)"></i>공휴일</span>
+    <div class="legend">${Object.entries(KIND).map(([k, v]) => `<span><i class="kdot k-${k}"></i>${k === 'event' ? esc(teamCalName()) : v}</span>`).join('')}<span><i class="kdot" style="background:var(--red)"></i>공휴일</span>
       ${loaded ? '' : '<span class="muted">구글 캘린더 불러오는 중…</span>'}</div>
     <div class="cal">${DOW.split('').map((x, i) => `<div class="dow ${i === 0 ? 'sun' : i === 6 ? 'sat' : ''}">${x}</div>`).join('')}${cells}</div>
-    <p class="hint">휴가와 '캘린더에 표시'한 업무 마감은 파트 공유 캘린더(구글)에 자동으로 등록됩니다. 날짜를 누르면 상세와 빠른 등록이 열립니다.</p>`;
+    <p class="hint">마일스톤과 '캘린더에 표시'한 업무는 ${esc(teamCalName())}에, 휴가는 ${esc(leaveCalName() || '휴가 캘린더')}에 자동 등록됩니다. 휴가 캘린더에 직접 적은 파트원 일정도 함께 보입니다. 날짜를 누르면 상세와 빠른 등록이 열립니다.</p>`;
 }
 
 async function loadCalendar(){
@@ -1757,6 +1895,8 @@ function projectForm(p){
     <div class="row2"><div class="field"><label>매출 (원)</label><input name="revenue" data-money inputmode="numeric" value="${m('revenue')}" ${dis}></div>
       <div class="field"><label>직접비 (원)</label><input name="directCost" data-money inputmode="numeric" value="${m('directCost')}" ${dis}></div></div>
     <div class="row2"><div class="field"><label>간접비 (원)</label><input name="indirectCost" data-money inputmode="numeric" value="${m('indirectCost')}" ${dis}></div><div></div></div>
+    <div class="row2"><div class="field"><label>장소</label><input name="venue" value="${v('venue')}" maxlength="100" placeholder="예: 잠실 DN 콜로세움" ${dis}></div>
+      <div class="field"><label>일정 (주간보고 개요용)</label><textarea name="schedule" rows="1" maxlength="500" placeholder="비우면 매출 인식 기간으로 표시" ${dis}>${v('schedule')}</textarea></div></div>
     <div class="calc" id="pjCalc"></div>
     <div class="field"><label>메모</label><textarea name="note" rows="2" ${dis}>${v('note')}</textarea></div>
     ${p.id ? `<p class="hint">연결된 업무 ${linked.length}건 (진행 중 ${linked.filter(t => t.status !== '완료').length}건)</p>` : ''}
@@ -1794,10 +1934,12 @@ function viewSettings(){
       <div class="field"><label>파트 이름</label><input name="partName" value="${esc(s.partName || '')}"></div>
       <div class="field"><label>리그 일정 캘린더 ID (여러 개는 쉼표로 구분)</label><textarea name="leagueCalendarIds" rows="2" placeholder="예: abc123@group.calendar.google.com">${esc(s.leagueCalendarIds || '')}</textarea></div>
       <div class="m-foot"><span class="sp"></span><button class="btn primary">저장</button></div></form></div>
-      <div class="card"><div class="card-h"><h3>파트 공유 캘린더</h3></div>
-        <p class="hint" style="margin-top:0">휴가·업무 마감이 자동 등록되는 구글 캘린더입니다. 구글 캘린더 설정에서 이 캘린더를 파트원 이메일과 공유하면 휴대폰에서도 볼 수 있어요.</p>
-        <div class="field mt"><label>캘린더 ID</label><input value="${esc(s.calendarId || '')}" readonly></div>
-        <button class="btn sm" data-act="copy" data-text="${esc(s.calendarId || '')}">ID 복사</button></div></div>
+      <div class="card"><div class="card-h"><h3>캘린더·보고 연동</h3></div><form data-form="calset">
+        <div class="field"><label>업무 캘린더 · ${s.calendarName ? `<span class="cal-ok">${esc(s.calendarName)} 연결됨</span>` : '<span class="cal-no">연결 안 됨</span>'}</label><input name="calendarId" value="${esc(s.calendarId || '')}" placeholder="캘린더 ID 또는 공유 링크(cid=…)"><small class="hint">마일스톤, '캘린더에 표시'한 업무 마감</small></div>
+        <div class="field"><label>휴가 캘린더 · ${s.leaveCalendarName ? `<span class="cal-ok">${esc(s.leaveCalendarName)} 연결됨</span>` : '<span class="cal-no">연결 안 됨</span>'}</label><input name="leaveCalendarId" value="${esc(s.leaveCalendarId || '')}" placeholder="캘린더 ID 또는 공유 링크(cid=…)"><small class="hint">모든 휴가 사용을 등록 ([닉네임] 연차, [닉네임] 대체휴무 (근무일)). 대휴 발생 등록은 올리지 않음</small></div>
+        <div class="field"><label>주간 업무보고 시트 주소</label><input name="reportSheetUrl" value="${esc(s.reportSheetUrl || '')}" placeholder="https://docs.google.com/spreadsheets/…"></div>
+        <p class="hint" style="margin-top:0">Apps Script를 배포한 계정에 두 캘린더의 '일정 변경' 권한이 있어야 합니다.</p>
+        <div class="m-foot"><span class="sp"></span><button class="btn primary">저장</button></div></form></div></div>
     <div class="mt">${myCard}</div>`;
 }
 
@@ -1810,6 +1952,7 @@ function memberForm(m={}){
       <div class="field"><label>권한</label><select name="role"><option value="member">파트원</option><option value="leader" ${m.role === 'leader' ? 'selected' : ''}>파트장</option></select></div></div>
     <div class="row2"><div class="field"><label>입사일</label><input type="date" name="hireDate" value="${esc(m.hireDate || '')}"></div>
       <div class="field"><label>이메일 (캘린더 공유용)</label><input type="email" name="email" value="${esc(m.email || '')}"></div></div>
+    <div class="field"><label>캘린더 표기 이름</label><input name="calName" value="${esc(m.calName || '')}" maxlength="20" placeholder="비우면 닉네임 그대로 (예: Denzi)"><small class="hint">휴가 캘린더 제목 [이름] 자리에 들어갑니다.</small></div>
     <div class="field"><label>연차 일수 수동 지정</label><input type="number" step="0.5" min="0" name="annualOverride" value="${esc(m.annualOverride == null ? '' : m.annualOverride)}" placeholder="비우면 입사일 기준 자동 계산"></div>
     ${isNew ? '<p class="hint">초기 PIN은 1234입니다. 첫 로그인 때 변경을 요청합니다.</p>' : `<label class="check"><input type="checkbox" name="active" ${m.active ? 'checked' : ''}> 재직 중 (해제하면 로그인할 수 없습니다)</label>`}
     <div class="m-foot">${isNew ? '' : `<button type="button" class="btn" data-act="resetPin" data-id="${m.id}">PIN 초기화</button>`}<span class="sp"></span>
@@ -1886,7 +2029,7 @@ const ACTIONS = {
   moveTask: ds => { const x = S.data.tasks.find(t => t.id === ds.id); if (!x) return; const ST = S.data.meta.taskStatus, i = ST.indexOf(x.status) + Number(ds.dir); if (i >= 0 && i < ST.length) setTaskStatus(x, ST[i]); },
   deleteTask: ds => { if (confirm('이 업무를 삭제할까요? 체크리스트와 진행 기록도 함께 삭제됩니다.')) mutate('deleteTask', {data:{id: ds.id}}, '업무를 삭제했습니다'); },
   newLeave: ds => openModal(leaveForm({date: ds.date})),
-  cancelLeave: ds => { if (confirm('이 휴가를 취소할까요? 공유 캘린더 일정도 함께 삭제됩니다.')) mutate('cancelLeave', {data:{id: ds.id}}, '휴가를 취소했습니다'); },
+  cancelLeave: ds => { if (confirm('이 휴가를 취소할까요? 휴가 캘린더 일정도 함께 삭제됩니다.')) mutate('cancelLeave', {data:{id: ds.id}}, '휴가를 취소했습니다'); },
   newComp: () => openModal(compForm()),
   deleteComp: ds => { if (confirm('대휴 발생 내역을 삭제할까요?')) mutate('deleteComp', {data:{id: ds.id}}, '삭제했습니다'); },
   calMove: ds => { let {y, m} = S.cal; m += Number(ds.dir); if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } S.cal = {y, m}; render(); },
@@ -1924,6 +2067,8 @@ const ACTIONS = {
   tplFromProject: ds => { const p = S.data.projects.find(x => x.id === ds.id); if (p) { S.tplProject = p.id; tplFromProject(p); } },
   repWeek: ds => { S.repWeek += Number(ds.dir); render(); },
   repToday: () => { S.repWeek = 0; render(); },
+  repTeamScope: ds => { S.repTeamScope = ds.val; render(); },
+  repTableCopy: () => { const R = weekRange(S.repWeek), rep = S._teamRep || buildTeamReport(R, repTeamScope()); if (!rep.rows.length) return toast('복사할 내용이 없습니다', 'err'); copyGrid(teamReportGrid(R, rep), '표를 복사했습니다. 시트 A열 첫 칸에 붙여넣으세요'); },
   repCopy: () => { const el = $('#repOut'); if (el) copyText(el.value, '주간보고를 복사했습니다', el); }
 };
 
@@ -1975,6 +2120,7 @@ const FORMS = {
   project: o => mutate('saveProject', {data:o}, o.id ? '프로젝트를 저장했습니다' : '프로젝트를 등록했습니다'),
   member: o => mutate('saveMember', {data:o}, o.id ? '구성원 정보를 저장했습니다' : '구성원을 추가했습니다 (초기 PIN 1234)'),
   part: o => mutate('saveSettings', {data:o}, '설정을 저장했습니다'),
+  calset: o => { S.calCache = {}; return mutate('saveSettings', {data:o}, '캘린더 연동을 저장했습니다'); },
   target: o => mutate('saveSettings', {data:{['salesTarget_' + S.salesYear]: o.target}}, '목표를 저장했습니다')
 };
 
@@ -2047,6 +2193,8 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.chg) { S[t.dataset.chg] = t.value; render(); return; }
+  if (t.hasAttribute('data-repdate')) { if (isDate(t.value)) { S.repDates[weekRange(S.repWeek).from] = t.value; render(); } return; }
+  if (t.hasAttribute('data-rephead')) { S.repHead = t.checked; render(); return; }
   if (t.id === 'libFile') { setLibFile(t.files && t.files[0]); return; }
   if (t.dataset.tk === 'dir' && S.tpl) { $('#tplItems').innerHTML = tplItemsHtml(); return; }
   if (t.id === 'tplShift' || t.id === 'tplBase') { const tb = $('#tplRows'); if (tb) tb.innerHTML = tplApplyRows(); return; }
