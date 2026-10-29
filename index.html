@@ -476,7 +476,7 @@ td.nowrap{white-space:nowrap}
 /* ═══════════ 설정 ═══════════
    Apps Script 웹앱 URL(…/exec)을 아래에 붙여넣으면 파트원은 주소 입력 없이 바로 로그인합니다.
    비워 두면 첫 접속 때 주소를 입력받아 브라우저에 저장합니다. */
-const API_URL = 'https://script.google.com/macros/s/AKfycbwKxf-A8MvMe_IJF-7JJcUavqRYGnwl7LXmRjbb-b9Y1DdFEUEhrVjXPjHKvfqIjQPP/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxDeITElfigC94qMLcx1blKeKhg99WUGLCAIH9H4Rx2WOhFdVwaeSfXWZaFiGLFlMie/exec';
 
 /* ═══════════ 상태·유틸 ═══════════ */
 const LS = {
@@ -2441,7 +2441,7 @@ function viewSettings(){
         <div class="field"><label>주간 업무보고 시트 주소</label><input name="reportSheetUrl" value="${esc(s.reportSheetUrl || '')}" placeholder="https://docs.google.com/spreadsheets/…"></div>
         <p class="hint" style="margin-top:0">Apps Script를 배포한 계정에 두 캘린더의 '일정 변경' 권한이 있어야 합니다.</p>
         <div class="m-foot"><span class="sp"></span><button class="btn primary">저장</button></div></form></div></div>
-    ${notifyCard()}<div class="mt">${myCard}</div>`;
+    ${migrateCard()}${notifyCard()}<div class="mt">${myCard}</div>`;
 }
 
 function memberForm(m={}){
@@ -3164,6 +3164,16 @@ function uxAfter(){
   document.querySelectorAll('.tabs, .seg, .chips').forEach(el => { const on = el.querySelector('.on'); if (on && el.scrollWidth > el.clientWidth) el.scrollLeft = on.offsetLeft - el.clientWidth / 2 + on.offsetWidth / 2; });
 }
 
+
+/* 기존 시트 데이터 한 번에 가져오기 */
+function migrateCard(){
+  const s = S.data.settings;
+  return `<div class="card mt"><div class="card-h"><h3>기존 데이터 가져오기</h3>${s.migratedAt ? `<small class="muted">마지막 ${esc(s.migratedAt)}</small>` : ''}</div>
+    <form data-form="migrate" id="migForm"><div class="chips">${[['projects', '프로젝트'], ['tasks', '업무'], ['milestones', '일정'], ['vendors', '업체'], ['leaves', '휴가·대휴'], ['league', '리그 시트']].map(([k, l]) => `<label class="chip-ck"><input type="checkbox" name="modules" value="${k}" checked>${l}</label>`).join('')}</div>
+    <p class="hint">기존 파트 관리시트(Sales_DB·Task_DB·Official_DB·Vendor_DB·Leave_DB)와 리그 시트를 옮깁니다. 다시 눌러도 중복되지 않고, 앱에서 고친 내용은 그대로 둡니다.</p>
+    <div class="m-foot"><span class="sp"></span><button class="btn primary">가져오기</button></div></form></div>`;
+}
+
 /* ═══════════ 이벤트 ═══════════ */
 const ACTIONS = {
   logout: () => { if (confirm('로그아웃할까요?')) logout(); },
@@ -3346,6 +3356,18 @@ Object.assign(ACTIONS, LG_ACTIONS, {legacyOpen: () => openModal(legacyForm(null)
 FORMS.legacy = () => legacyRun('preview');
 Object.assign(ACTIONS, UX_ACTIONS);
 Object.assign(FORMS, UX_FORMS);
+FORMS.migrate = async o => {
+  const mods = [].concat(o.modules || []); if (!mods.length) return toast('항목을 하나 이상 고르세요', 'err');
+  if (!confirm('기존 시트 데이터를 가져올까요? 1분 정도 걸릴 수 있습니다.')) return;
+  setBusy(1);
+  try {
+    const r = await api('migrateAll', {data: {modules: mods}});
+    S.lg = null; S.calCache = {}; render();
+    const rep = r.report || {counts: {}, warnings: []};
+    openModal(`${mHead('가져오기 완료')}<div class="lg-rep">${Object.entries(rep.counts).filter(([, v]) => v).map(([k, v]) => `<div><span class="muted">${esc(k)}</span><b>${won(v)}</b></div>`).join('')}</div>${rep.warnings.map(w => `<p class="hint">${esc(w)}</p>`).join('')}<div class="m-foot"><span class="sp"></span><button class="btn primary" data-act="closeModal">확인</button></div>`, {wide: true});
+  } catch (e) { if (e.message !== 'AUTH') toast(e.message, 'err'); }
+  finally { setBusy(-1); }
+};
 Object.assign(FORMS, LG_FORMS);
 
 function formData(f){
