@@ -476,7 +476,7 @@ td.nowrap{white-space:nowrap}
 /* ═══════════ 설정 ═══════════
    Apps Script 웹앱 URL(…/exec)을 아래에 붙여넣으면 파트원은 주소 입력 없이 바로 로그인합니다.
    비워 두면 첫 접속 때 주소를 입력받아 브라우저에 저장합니다. */
-const API_URL = 'https://script.google.com/macros/s/AKfycbwTttkWdEeF8J9oexj0kdIqs8PoAlRTYnYwyPJuS7U-HAflMRrjb1jaDc8wInO8NYRD/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxDeITElfigC94qMLcx1blKeKhg99WUGLCAIH9H4Rx2WOhFdVwaeSfXWZaFiGLFlMie/exec';
 
 /* ═══════════ 상태·유틸 ═══════════ */
 const LS = {
@@ -3169,7 +3169,7 @@ function uxAfter(){
 function migrateCard(){
   const s = S.data.settings;
   return `<div class="card mt"><div class="card-h"><h3>기존 데이터 가져오기</h3>${s.migratedAt ? `<small class="muted">마지막 ${esc(s.migratedAt)}</small>` : ''}</div>
-    <form data-form="migrate" id="migForm"><div class="chips">${[['projects', '프로젝트'], ['tasks', '업무'], ['milestones', '일정'], ['vendors', '업체'], ['leaves', '휴가·대휴'], ['league', '리그 시트']].map(([k, l]) => `<label class="chip-ck"><input type="checkbox" name="modules" value="${k}" checked>${l}</label>`).join('')}</div>
+    <form data-form="migrate" id="migForm"><div class="chips">${[['projects', '프로젝트'], ['tasks', '업무'], ['milestones', '일정'], ['vendors', '업체'], ['contacts', '외부 연락처'], ['leaves', '휴가·대휴'], ['league', '리그 시트']].map(([k, l]) => `<label class="chip-ck"><input type="checkbox" name="modules" value="${k}" checked>${l}</label>`).join('')}</div>
     <p class="hint">기존 파트 관리시트(Sales_DB·Task_DB·Official_DB·Vendor_DB·Leave_DB)와 리그 시트를 옮깁니다. 다시 눌러도 중복되지 않고, 앱에서 고친 내용은 그대로 둡니다.</p>
     <div class="m-foot"><span class="sp"></span><button class="btn primary">가져오기</button></div></form></div>`;
 }
